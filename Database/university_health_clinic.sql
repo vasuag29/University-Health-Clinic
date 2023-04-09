@@ -4,30 +4,36 @@ CREATE DATABASE university_health_clinic;
 USE university_health_clinic;
 
 CREATE TABLE specialization (
-name VARCHAR(20) PRIMARY KEY,
+name VARCHAR(40) PRIMARY KEY,
 description TEXT
+);
+
+CREATE TABLE qualification (
+abbreviation VARCHAR(10) PRIMARY KEY,
+name VARCHAR(40) UNIQUE NOT NULL
 );
 
 CREATE TABLE doctor (
 doctor_id VARCHAR(7) PRIMARY KEY,
 first_name VARCHAR(15) NOT NULL,
 last_name VARCHAR(15) NOT NULL,
-email_id VARCHAR(20) NOT NULL,
-qualification VARCHAR(5) NOT NULL,
-phone_number INT NOT NULL,
-specialization VARCHAR(20),
-CONSTRAINT specialization_fk FOREIGN KEY (specialization) REFERENCES specialization(name)
+email_id VARCHAR(40) UNIQUE NOT NULL,
+qualification VARCHAR(10) NOT NULL,
+phone_number VARCHAR(10) UNIQUE NOT NULL,
+specialization VARCHAR(40),
+CONSTRAINT specialization_fk FOREIGN KEY (specialization) REFERENCES specialization(name),
+CONSTRAINT qualification_fk FOREIGN KEY (qualification) REFERENCES qualification(abbreviation)
 );
 
 CREATE TABLE student (
 student_id VARCHAR(7) PRIMARY KEY,
 first_name VARCHAR(15) NOT NULL,
 last_name VARCHAR(15) NOT NULL,
-email_id VARCHAR(20) NOT NULL,
-phone_number INT NOT NULL,
+email_id VARCHAR(40) UNIQUE NOT NULL,
+phone_number VARCHAR(10) UNIQUE NOT NULL,
 date_of_birth DATE NOT NULL,
 sex ENUM("Male", "Female") NOT NULL,
-degree_enrolled VARCHAR(30) NOT NULL,
+degree_enrolled VARCHAR(60) NOT NULL,
 university_health_insurance BOOL
 );
 
@@ -64,7 +70,6 @@ FOREIGN KEY (student_id) REFERENCES student(student_id)
 CREATE TABLE medicine (
 name VARCHAR(20),
 manufacturer VARCHAR(20),
-quantity INT,
 PRIMARY KEY (name, manufacturer)
 );
 
