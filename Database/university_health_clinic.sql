@@ -82,4 +82,43 @@ FOREIGN KEY (student_id) REFERENCES student(student_id),
 FOREIGN KEY (medicine) REFERENCES medicine(name)
 );
 
+# ------------------------------------- Procedures -------------------------------------
+
+DROP PROCEDURE IF EXISTS student_by_id;
+DELIMITER $$
+CREATE PROCEDURE student_by_id(s_id VARCHAR(7))
+BEGIN
+	DECLARE email_id VARCHAR(40);
+	
+    SELECT email_id  INTO std_id FROM student WHERE student_id = s_id;
+    
+    IF email_id is NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'The given student is not found in the records.';
+    ELSE
+		SELECT * FROM student
+		WHERE student_id = s_id;
+	END IF;
+END $$
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS get_appointments;
+DELIMITER $$
+CREATE PROCEDURE get_appointments()
+BEGIN
+	DECLARE num_appts VARCHAR(40);
+	
+    SELECT COUNT(*) INTO num_appts FROM appointment_booking;
+    
+    IF num_appts = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No appointments found';
+    ELSE
+		SELECT a.*, ab.student_id, ab.doctor_id FROM appointment_booking AS ab
+		LEFT JOIN appointment AS a ON a.appointment_id = ab.appointment_id;
+	END IF;
+END $$
+DELIMITER ;
+
 
