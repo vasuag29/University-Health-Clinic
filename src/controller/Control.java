@@ -31,4 +31,9 @@ public class Control implements Features {
 	public void showOriginalMenu() {
 		view.showMenu();
 	}
+
+	@Override
+	public void getAppointmentInfo() {
+		view.createNewAppointment();
+	}
 }

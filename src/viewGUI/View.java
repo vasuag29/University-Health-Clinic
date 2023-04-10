@@ -9,4 +9,6 @@ public interface View {
 	void setupForNewAppointment(Features features);
 
 	void showMenu();
+
+	void createNewAppointment();
 }
