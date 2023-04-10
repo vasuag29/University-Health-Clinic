@@ -28,14 +28,11 @@ public class MainModel implements Model{
   }
 
   @Override
-  public void openDbConnection(String databaseUrl, String username, String password) {
+  public void openDbConnection(String databaseUrl, String username, String password) throws Exception {
     try {
       conn = DriverManager.getConnection(databaseUrl, username, password);
-      System.out.println("URL: " + databaseUrl);
-      System.out.println("Connection: " + conn);
-      System.out.println();
     } catch (SQLException e) {
-      throw new RuntimeException("Could not connect to database. Please make sure that the username" +
+      throw new Exception("Could not connect to database. Please make sure that the username" +
               "and password are correct.");
     }
   }

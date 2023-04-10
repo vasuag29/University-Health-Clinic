@@ -5,6 +5,7 @@ import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
+import java.sql.Connection;
 import java.util.Date;
 
 import controller.Features;
@@ -29,6 +30,7 @@ public class NewAppointment extends JFrame {
 	JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
 	JLabel dateLabel = new JLabel("Select Date");
 
+	Connection con;
 	/*
 	Window to display get inputs for new appointment.
 	 */

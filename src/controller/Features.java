@@ -6,4 +6,6 @@ public interface Features {
 	void showOriginalMenu();
 
 	void getAppointmentInfo();
+
+	void connectToDB();
 }

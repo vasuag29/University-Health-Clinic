@@ -9,7 +9,7 @@ import model.DataTypes.Specialization;
 import model.DataTypes.Student;
 
 public interface Model {
-  void openDbConnection(String databaseUrl, String username, String password);
+  void openDbConnection(String databaseUrl, String username, String password) throws Exception;
   void closeDbConnection();
   Connection getDbConnection();
   List<Doctor> getAllDoctors();

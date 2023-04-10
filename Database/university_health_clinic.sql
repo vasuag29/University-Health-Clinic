@@ -89,8 +89,8 @@ DELIMITER $$
 CREATE PROCEDURE student_by_id(s_id VARCHAR(7))
 BEGIN
 	DECLARE email_id VARCHAR(40);
-	
-    SELECT email_id  INTO std_id FROM student WHERE student_id = s_id;
+	DECLARE std_id VARCHAR(7);
+    SELECT email_id INTO std_id FROM student WHERE student_id = s_id;
     
     IF email_id is NULL THEN
 		SIGNAL SQLSTATE '45000'

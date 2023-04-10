@@ -11,4 +11,10 @@ public interface View {
 	void showMenu();
 
 	void createNewAppointment();
+
+	String getUsername();
+
+	char[] getPassword();
+
+	void showErrorMessage(String errorMessage);
 }

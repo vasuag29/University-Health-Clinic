@@ -1,12 +1,8 @@
 package controller;
 
-import javax.swing.*;
-
 import model.Model;
 import viewGUI.View;
-import controller.Features;
 
-import viewGUI.newAppointment.NewAppointment;
 
 public class Control implements Features {
 	private Model model;
@@ -35,5 +31,18 @@ public class Control implements Features {
 	@Override
 	public void getAppointmentInfo() {
 		view.createNewAppointment();
+	}
+
+	@Override
+	public void connectToDB() {
+		try {
+			String username = view.getUsername();
+			char[] password = view.getPassword();
+			model.openDbConnection("jdbc:mysql://localhost:3306/university_health_clinic",
+							username, String.valueOf(password));
+			view.showMenu();
+		} catch (Exception e) {
+			view.showErrorMessage(e.getMessage());
+		}
 	}
 }
