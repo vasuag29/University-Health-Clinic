@@ -27,6 +27,7 @@ public class MainModel implements Model{
     return this.conn;
   }
 
+  @Override
   public void openDbConnection(String databaseUrl, String username, String password) {
     try {
       conn = DriverManager.getConnection(databaseUrl, username, password);
@@ -39,6 +40,7 @@ public class MainModel implements Model{
     }
   }
 
+  @Override
   public void closeDbConnection() {
     try {
       conn.close();
@@ -47,6 +49,7 @@ public class MainModel implements Model{
     }
   }
 
+  @Override
   public List<Doctor> getAllDoctors() {
     List<Doctor> doctors = null;
 
@@ -120,6 +123,7 @@ public class MainModel implements Model{
     return specializations;
   }
 
+  @Override
   public Student getStudentById(String studentId) {
     Student student = null;
 
@@ -130,18 +134,19 @@ public class MainModel implements Model{
       ResultSet rs = call_stmt.getResultSet();
 
       // move the cursor once because we know that there will be only one student in the result
-      rs.next();
-      String sId = rs.getString("student_id");
-      String firstName = rs.getString("first_name");
-      String lastName = rs.getString("last_name");
-      String emailId = rs.getString("email_id");
-      String phoneNumber = rs.getString("phone_number");
-      LocalDate dob = LocalDate.parse(rs.getString("date_of_birth"));
-      String sex = rs.getString("sex");
-      String degree = rs.getString("degree_enrolled");
-      boolean insurance = Boolean.parseBoolean(rs.getString("university_health_insurance"));
+      if(rs.next()) {
+        String sId = rs.getString("student_id");
+        String firstName = rs.getString("first_name");
+        String lastName = rs.getString("last_name");
+        String emailId = rs.getString("email_id");
+        String phoneNumber = rs.getString("phone_number");
+        LocalDate dob = LocalDate.parse(rs.getString("date_of_birth"));
+        String sex = rs.getString("sex");
+        String degree = rs.getString("degree_enrolled");
+        boolean insurance = Boolean.parseBoolean(rs.getString("university_health_insurance"));
 
-      student = new Student(sId, firstName, lastName, emailId, phoneNumber, dob, sex, degree, insurance);
+        student = new Student(sId, firstName, lastName, emailId, phoneNumber, dob, sex, degree, insurance);
+      }
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
