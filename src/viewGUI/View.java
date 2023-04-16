@@ -1,12 +1,15 @@
 package viewGUI;
 
+import java.util.List;
+
 import controller.Control;
 import controller.Features;
+import model.DataTypes.Specialization;
 
 public interface View {
 	void addFeatures(Features features);
 
-	void setupForNewAppointment(Features features);
+	void setupForNewAppointment(Features features, List<Specialization> specializations);
 
 	void showMenu();
 
@@ -17,4 +20,6 @@ public interface View {
 	char[] getPassword();
 
 	void showErrorMessage(String errorMessage);
+
+	void setupForShowAppointments(Features features);
 }

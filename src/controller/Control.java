@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.List;
+
+import model.DataTypes.Specialization;
 import model.Model;
 import viewGUI.View;
 
@@ -20,7 +23,8 @@ public class Control implements Features {
 
 	@Override
 	public void makeNewAppointment(Features features) {
-		view.setupForNewAppointment(features);
+		List<Specialization> specializations = model.getSpecializationList();
+		view.setupForNewAppointment(features, specializations);
 	}
 
 	@Override
@@ -44,5 +48,10 @@ public class Control implements Features {
 		} catch (Exception e) {
 			view.showErrorMessage(e.getMessage());
 		}
+	}
+
+	@Override
+	public void showAppointmentsChart(Features features) {
+		view.setupForShowAppointments(features);
 	}
 }

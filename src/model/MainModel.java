@@ -129,9 +129,9 @@ public class MainModel implements Model{
       specializations = new ArrayList<>();
       while (rs.next()) {
         String name = rs.getString("name");
-        String desc = rs.getString("description");
+        //String desc = rs.getString("description");
 
-        Specialization specialization = new Specialization(name, desc);
+        Specialization specialization = new Specialization(name);
         specializations.add(specialization);
       }
     } catch (SQLException e) {

@@ -5,10 +5,17 @@ import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import controller.Features;
+import model.DataTypes.Specialization;
+
 import javax.swing.*;
 
 public class NewAppointment extends JFrame {
@@ -25,20 +32,35 @@ public class NewAppointment extends JFrame {
 	JComboBox minutesComboBox = new JComboBox(minutes);
 	JComboBox timeComboBox = new JComboBox(amPm);
 
+	JComboBox specializationComboBox;
+
 	UtilDateModel model = new UtilDateModel();
 	JDatePanelImpl datePanel = new JDatePanelImpl(model);
 	JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
 	JLabel dateLabel = new JLabel("Select Date");
+	JLabel doctorLabel = new JLabel("Available Doctors");
+	JLabel specializationLabel = new JLabel("Specializations");
+	JComboBox doctorList = new JComboBox();
 
 	Connection con;
 	/*
 	Window to display get inputs for new appointment.
 	 */
-	public void showNewAppointment(Features features) {
+	public void showNewAppointment(Features features, List<Specialization> specializations) {
 		newAppointmentPanel = new JPanel();
 		setSize(320, 500);
 		setLocation(200, 200);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		List<String> specializationAvailable = new ArrayList<>();
+
+		for (Specialization name : specializations) {
+			specializationAvailable.add(name.getSpecializationName());
+		}
+
+		String[] specializationArray = specializationAvailable.toArray(new String[0]);
+
+		specializationComboBox = new JComboBox(specializationArray);
 
 		newAppointmentPanel.add(studentIdLabel);
 		newAppointmentPanel.add(studentId);
@@ -48,14 +70,16 @@ public class NewAppointment extends JFrame {
 		newAppointmentPanel.add(timeComboBox);
 		newAppointmentPanel.add(dateLabel);
 		newAppointmentPanel.add(datePicker);
-		newAppointmentPanel.add(createAppointment);
+		newAppointmentPanel.add(specializationLabel);
+		newAppointmentPanel.add(specializationComboBox);
+		//newAppointmentPanel.add(doctorList);
 		newAppointmentPanel.add(back);
-
 		add(newAppointmentPanel);
 		setVisible(true);
 
 		back.addActionListener(e -> features.showOriginalMenu());
 		createAppointment.addActionListener(e -> features.getAppointmentInfo());
+		specializationComboBox.addActionListener(e -> showDoctorList());
 	}
 
 	/*
@@ -75,5 +99,20 @@ public class NewAppointment extends JFrame {
 		String hrs = hoursComboBox.getName();
 		String mins = minutesComboBox.getName();
 		String time = timeComboBox.getName();
+	}
+
+	public void showDoctorList() {
+		System.out.println("clicked");
+		String[] temp = {"hello", "bye"};
+		newAppointmentPanel.remove(back);
+		newAppointmentPanel.remove(doctorList);
+		newAppointmentPanel.remove(doctorLabel);
+		newAppointmentPanel.remove(doctorLabel);
+		doctorList = new JComboBox(temp);
+		newAppointmentPanel.add(doctorLabel);
+		newAppointmentPanel.add(doctorList);
+		newAppointmentPanel.add(back);
+		newAppointmentPanel.add(createAppointment);
+		setVisible(true);
 	}
 }

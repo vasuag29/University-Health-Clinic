@@ -8,4 +8,6 @@ public interface Features {
 	void getAppointmentInfo();
 
 	void connectToDB();
+
+	void showAppointmentsChart(Features features);
 }

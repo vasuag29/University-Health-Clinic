@@ -4,9 +4,9 @@ public class Specialization {
   private String specializationName;
   private String description;
 
-  public Specialization(String specializationName, String description) {
+  public Specialization(String specializationName) {
     this.specializationName = specializationName;
-    this.description = description;
+    //this.description = description;
   }
 
   public String getSpecializationName() {
