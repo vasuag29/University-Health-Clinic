@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,8 @@ import model.DataTypes.Student;
 
 public class MainModel implements Model{
   private Connection conn;
+  private final DateTimeFormatter sqlDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private final DateTimeFormatter sqlTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
   public MainModel() {
     this.conn = null;
@@ -66,14 +69,16 @@ public class MainModel implements Model{
   }
 
   @Override
-  public List<Doctor> getAvailableDoctors(String specializationName, LocalDate appointmentDate, LocalTime appointmentTime) {
+  public List<Doctor> getAvailableDoctors(String specializationName,
+                                          LocalDate appointmentDate,
+                                          LocalTime appointmentTime) {
     List<Doctor> doctors = null;
 
     String call = "CALL get_available_doctors(?,?,?)";
     try (CallableStatement call_stmt = conn.prepareCall(call)) {
       call_stmt.setString(1, specializationName);
-      call_stmt.setObject(2, appointmentDate);
-      call_stmt.setObject(3, appointmentTime);
+      call_stmt.setString(2, appointmentDate.format(sqlDateFormatter));
+      call_stmt.setString(3, appointmentTime.format(sqlTimeFormatter));
       call_stmt.execute();
       ResultSet rs = call_stmt.getResultSet();
       doctors = new ArrayList<>();
@@ -178,8 +183,8 @@ public class MainModel implements Model{
     try (CallableStatement call_stmt = conn.prepareCall(call)) {
       call_stmt.setString(1, studentId);
       call_stmt.setString(2, doctorId);
-      call_stmt.setObject(3, appointmentDate);
-      call_stmt.setObject(4, appointmentTime);
+      call_stmt.setString(3, appointmentDate.format(sqlDateFormatter));
+      call_stmt.setString(4, appointmentTime.format(sqlTimeFormatter));
       call_stmt.execute();
       ResultSet rs = call_stmt.getResultSet();
 
