@@ -10,7 +10,8 @@ public class Appointment {
   private String studentId;
   private String doctorId;
 
-  public Appointment(String appointmentId, LocalDate appointmentDate, LocalTime appointmentTime, String studentId, String doctorId) {
+  public Appointment(String appointmentId, LocalDate appointmentDate,
+                     LocalTime appointmentTime, String studentId, String doctorId) {
     this.appointmentId = appointmentId;
     this.appointmentDate = appointmentDate;
     this.appointmentTime = appointmentTime;

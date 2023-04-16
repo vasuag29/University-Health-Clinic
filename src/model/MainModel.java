@@ -55,16 +55,31 @@ public class MainModel implements Model{
       ResultSet rs = executeSqlQuery("SELECT * FROM doctor");
       doctors = new ArrayList<>();
       while (rs.next()) {
-        String doctorId = rs.getString("doctor_id");
-        String firstName = rs.getString("first_name");
-        String lastName = rs.getString("last_name");
-        String emailId = rs.getString("email_id");
-        String qualification = rs.getString("qualification");
-        String phoneNumber = rs.getString("phone_number");
-        String specialization = rs.getString("specialization");
+        Doctor doctor = readDoctorDataFromResultSet(rs);
+        doctors.add(doctor);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
 
-        Doctor doctor = new Doctor(doctorId, firstName, lastName, emailId, qualification,
-                phoneNumber, specialization);
+    return doctors;
+  }
+
+  @Override
+  public List<Doctor> getAvailableDoctors(String specializationName, LocalDate appointmentDate, LocalTime appointmentTime) {
+    List<Doctor> doctors = null;
+
+    String call = "CALL get_available_doctors(?,?,?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, specializationName);
+      call_stmt.setObject(2, appointmentDate);
+      call_stmt.setObject(3, appointmentTime);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+      doctors = new ArrayList<>();
+
+      while (rs.next()) {
+        Doctor doctor = readDoctorDataFromResultSet(rs);
         doctors.add(doctor);
       }
     } catch (SQLException e) {
@@ -152,10 +167,62 @@ public class MainModel implements Model{
     return student;
   }
 
+  @Override
+  public Appointment createNewAppointment(String studentId,
+                                          String doctorId,
+                                          LocalDate appointmentDate,
+                                          LocalTime appointmentTime) {
+    Appointment newAppointment = null;
+
+    String call = "CALL create_new_appointment(?,?,?,?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, studentId);
+      call_stmt.setString(2, doctorId);
+      call_stmt.setObject(3, appointmentDate);
+      call_stmt.setObject(4, appointmentTime);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+
+      // move the cursor once because we know that there will be only one appointment in the result
+      if(rs.next()) {
+        String appointmentId = rs.getString("appointment_id");
+        String sId = rs.getString("student_id");
+        String dId = rs.getString("doctor_id");
+        LocalDate apptDate = LocalDate.parse(rs.getString("appointment_date"));
+        LocalTime apptTime = LocalTime.parse(rs.getString("appointment_time"));
+
+        newAppointment = new Appointment(appointmentId, apptDate, apptTime, sId, dId);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return newAppointment;
+  }
+
   private ResultSet executeSqlQuery(String query) throws SQLException {
     Statement stmt = conn.createStatement();
     ResultSet rs;
     rs = stmt.executeQuery(query);
     return rs;
+  }
+
+  private Doctor readDoctorDataFromResultSet(ResultSet rs) {
+    Doctor doctor = null;
+    try {
+      String doctorId = rs.getString("doctor_id");
+      String firstName = rs.getString("first_name");
+      String lastName = rs.getString("last_name");
+      String emailId = rs.getString("email_id");
+      String qualification = rs.getString("qualification");
+      String phoneNumber = rs.getString("phone_number");
+      String specialization = rs.getString("specialization");
+      doctor = new Doctor(doctorId, firstName, lastName, emailId, qualification,
+              phoneNumber, specialization);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return doctor;
   }
 }

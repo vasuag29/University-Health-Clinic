@@ -38,7 +38,7 @@ university_health_insurance BOOL
 );
 
 CREATE TABLE appointment (
-appointment_id VARCHAR(5) PRIMARY KEY,
+appointment_id VARCHAR(5) PRIMARY KEY AUTO_INCREMENT,
 appointment_time TIME,
 appointment_date DATE
 );
@@ -107,7 +107,7 @@ DROP PROCEDURE IF EXISTS get_appointments;
 DELIMITER $$
 CREATE PROCEDURE get_appointments()
 BEGIN
-	DECLARE num_appts VARCHAR(40);
+	DECLARE num_appts INT;
 	
     SELECT COUNT(*) INTO num_appts FROM appointment_booking;
     
@@ -121,4 +121,82 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS get_available_doctors;
+DELIMITER $$
+CREATE PROCEDURE get_available_doctors(
+d_specialization VARCHAR(40), 
+appt_date DATE, 
+appt_time TIME)
+BEGIN
+	DECLARE num_available_doctors INT;
+	
+    SELECT COUNT(*) INTO num_available_doctors FROM doctor 
+    WHERE specialization = d_specialization;
+    
+    IF available_doctors = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No available doctors found';
+    ELSE
+		SELECT d.*
+		FROM doctor AS d
+		LEFT JOIN appointment_booking AS ab ON d.doctor_id = ab.doctor_id
+		LEFT JOIN appointment AS a ON ab.appointment_id = a.appointment_id
+		WHERE d.specialization = d_specialization
+		AND (a.appointment_date IS NULL 
+			OR NOT (a.appointment_date = appt_date AND a.appointment_time = appt_time));
+	END IF;
+END $$
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS create_new_appointment;
+DELIMITER $$
+CREATE PROCEDURE create_new_appointment (
+    IN student_id VARCHAR(7),
+    IN doctor_id VARCHAR(7),
+    IN appointment_date DATE,
+    IN appointment_time TIME
+)
+BEGIN
+    DECLARE appointment_id VARCHAR(5);
+
+    -- Check if the student exists
+    IF NOT EXISTS (SELECT * FROM student WHERE student_id = student_id) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Student not found';
+    END IF;
+
+    -- Check if the doctor exists
+    IF NOT EXISTS (SELECT * FROM doctor WHERE doctor_id = doctor_id) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Doctor not found';
+    END IF;
+
+    -- Check if the appointment date is in the future
+    IF appointment_date < CURDATE() THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Appointment date must be in the future';
+    END IF;
+
+    -- Check if the appointment time is already taken
+    IF EXISTS (
+        SELECT * FROM appointment_booking
+        WHERE appointment_date = appointment_date
+          AND appointment_time = appointment_time
+          AND doctor_id = doctor_id
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Appointment time is already taken';
+    END IF;
+
+    -- Insert the new appointment into the appointment table
+    INSERT INTO appointment (appointment_time, appointment_date) VALUES (appointment_time, appointment_date);
+    SET appointment_id = LAST_INSERT_ID();
+
+    -- Insert the new appointment booking into the appointment_booking table
+    INSERT INTO appointment_booking (appointment_id, doctor_id, student_id) 
+    VALUES (appointment_id, doctor_id, student_id);
+
+    SELECT a.*, ab.student_id, ab.doctor_id FROM appointment_booking AS ab
+    LEFT JOIN appointment AS a ON a.appointment_id = ab.appointment_id
+    WHERE ab.appointment_id = appointment_id;
+END $$
+DELIMITER ;
 
