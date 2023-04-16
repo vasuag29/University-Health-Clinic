@@ -30,6 +30,7 @@ public class MainModel implements Model{
   @Override
   public void openDbConnection(String databaseUrl, String username, String password) throws Exception {
     try {
+      Class.forName("com.mysql.cj.jdbc.Driver");
       conn = DriverManager.getConnection(databaseUrl, username, password);
     } catch (SQLException e) {
       throw new Exception("Could not connect to database. Please make sure that the username" +
