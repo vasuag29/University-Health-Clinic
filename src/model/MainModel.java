@@ -95,6 +95,33 @@ public class MainModel implements Model{
   }
 
   @Override
+  public List<Appointment> getAppointmentsByStudentId(String studentId) {
+    List<Appointment> appointments = null;
+
+    String call = "CALL get_appointments_by_student_id(?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, studentId);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+      appointments = new ArrayList<>();
+      while (rs.next()) {
+        String apptId = rs.getString("appointment_id");
+        LocalDate date = LocalDate.parse(rs.getString("appointment_date"));
+        LocalTime time = LocalTime.parse(rs.getString("appointment_time"));
+        String sId = rs.getString("student_id");
+        String docId = rs.getString("doctor_id");
+
+        Appointment appointment = new Appointment(apptId, date, time, sId, docId);
+        appointments.add(appointment);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return appointments;
+  }
+
+  @Override
   public List<Appointment> getAllAppointments() {
     List<Appointment> appointments = null;
 

@@ -23,4 +23,6 @@ public interface View {
 	void showErrorMessage(String errorMessage);
 
 	void setupForShowAppointments(Features features);
+
+	void showStudentAppointments(Model model, Features features);
 }

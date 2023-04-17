@@ -121,6 +121,23 @@ BEGIN
 END $$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS get_appointments_by_student_id;
+DELIMITER $$
+CREATE PROCEDURE get_appointments_by_student_id(stu_id VARCHAR(7))
+BEGIN
+	DECLARE num_appts INT;
+	
+    SELECT COUNT(*) INTO num_appts FROM appointment_booking;
+    
+    IF num_appts = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No appointments found';
+    ELSE
+		SELECT a.*, ab.student_id, ab.doctor_id FROM appointment_booking AS ab
+		JOIN appointment AS a ON a.appointment_id = ab.appointment_id AND ab.student_id = stu_id;
+	END IF;
+END $$
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS get_available_doctors;
 DELIMITER $$
@@ -212,8 +229,8 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The given dcotor is not found in the records.';
     ELSE
-		SELECT * FROM student
-		WHERE student_id = s_id;
+		SELECT * FROM doctor
+		WHERE doctor_id = doc_id;
 	END IF;
 END $$
 DELIMITER ;

@@ -10,4 +10,6 @@ public interface Features {
 	void connectToDB();
 
 	void showAppointmentsChart(Features features);
+
+	void showStudentAppointments(Features features);
 }

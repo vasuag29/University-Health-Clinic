@@ -69,6 +69,7 @@ public class MainView extends JFrame implements View {
 		panel.add(showAppointments);
 		panel.add(deleteDoctor);
 		appointment.disableNewAppointmentWindow();
+		showAppointment.disableShowAppointmentWindow();
 		setVisible(true);
 	}
 
@@ -97,6 +98,11 @@ public class MainView extends JFrame implements View {
 	public void setupForShowAppointments(Features features) {
 		showAppointment = new ShowAppointment();
 		setVisible(false);
-		showAppointment.showChart(features);
+		showAppointment.showSubOptions(features);
+	}
+
+	@Override
+	public void showStudentAppointments(Model model, Features features) {
+		showAppointment.getStudentAppointments(model, features);
 	}
 }
