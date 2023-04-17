@@ -5,16 +5,22 @@ import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import controller.Features;
+import model.DataTypes.Doctor;
 import model.DataTypes.Specialization;
+import model.Model;
+import viewGUI.View;
 
 import javax.swing.*;
 
@@ -24,29 +30,34 @@ public class NewAppointment extends JFrame {
 	JTextField studentId = new JTextField(15);
 	JButton createAppointment = new JButton("Create Appointment");
 	JButton back = new JButton("Back");
-	String[] hours = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+	String[] hours = {"09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
 	String[] minutes = {"00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"};
-	String[] amPm = {"AM", "PM"};
-	JComboBox hoursComboBox = new JComboBox(hours);
+	JComboBox hoursComboBox;
 	JLabel hoursLabel = new JLabel("Select Time");
-	JComboBox minutesComboBox = new JComboBox(minutes);
-	JComboBox timeComboBox = new JComboBox(amPm);
+	JComboBox minutesComboBox;
 
 	JComboBox specializationComboBox;
 
 	UtilDateModel model = new UtilDateModel();
 	JDatePanelImpl datePanel = new JDatePanelImpl(model);
-	JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+	JDatePickerImpl datePicker;
 	JLabel dateLabel = new JLabel("Select Date");
 	JLabel doctorLabel = new JLabel("Available Doctors");
 	JLabel specializationLabel = new JLabel("Specializations");
 	JComboBox doctorList = new JComboBox();
 
 	Connection con;
+	Model mainModel;
+	View view;
 	/*
 	Window to display get inputs for new appointment.
 	 */
-	public void showNewAppointment(Features features, List<Specialization> specializations) {
+	public void showNewAppointment(Features features, List<Specialization> specializations, Model model) {
+		hoursComboBox = new JComboBox(hours);
+		minutesComboBox = new JComboBox(minutes);
+		datePicker = new JDatePickerImpl(datePanel);
+
+		mainModel = model;
 		newAppointmentPanel = new JPanel();
 		setSize(320, 500);
 		setLocation(200, 200);
@@ -67,12 +78,10 @@ public class NewAppointment extends JFrame {
 		newAppointmentPanel.add(hoursLabel);
 		newAppointmentPanel.add(hoursComboBox);
 		newAppointmentPanel.add(minutesComboBox);
-		newAppointmentPanel.add(timeComboBox);
 		newAppointmentPanel.add(dateLabel);
 		newAppointmentPanel.add(datePicker);
 		newAppointmentPanel.add(specializationLabel);
 		newAppointmentPanel.add(specializationComboBox);
-		//newAppointmentPanel.add(doctorList);
 		newAppointmentPanel.add(back);
 		add(newAppointmentPanel);
 		setVisible(true);
@@ -93,26 +102,74 @@ public class NewAppointment extends JFrame {
 	/*
 	Get appointment info
 	 */
-	public void createAppointment() {
+	public void createAppointment(Model model, View view) {
 		Date selectedDate = (Date) datePicker.getModel().getValue();
+		LocalDate localDate = convertDateToLocalDate(selectedDate);
+
 		String studentUniqueId = studentId.getText();
-		String hrs = hoursComboBox.getName();
-		String mins = minutesComboBox.getName();
-		String time = timeComboBox.getName();
+
+		String hrs = (String) hoursComboBox.getSelectedItem();
+		String mins = (String) minutesComboBox.getSelectedItem();
+		String timeConcatenate = hrs + ":" + mins + ":00";
+		LocalTime localTime = convertStringToLocalTime(timeConcatenate);
+
+		String doctorName = (String) doctorList.getSelectedItem();
+		String[] doctorNameSplit = doctorName.split(" ");
+		String doctorId = model.getDoctorByName(doctorNameSplit[0], doctorNameSplit[1]);
+		model.createNewAppointment(studentUniqueId, doctorId, localDate, localTime);
+		showMessage("Appointment Created Successfully");
+		view.showMenu();
 	}
 
 	public void showDoctorList() {
-		System.out.println("clicked");
-		String[] temp = {"hello", "bye"};
-		newAppointmentPanel.remove(back);
-		newAppointmentPanel.remove(doctorList);
-		newAppointmentPanel.remove(doctorLabel);
-		newAppointmentPanel.remove(doctorLabel);
-		doctorList = new JComboBox(temp);
-		newAppointmentPanel.add(doctorLabel);
-		newAppointmentPanel.add(doctorList);
-		newAppointmentPanel.add(back);
-		newAppointmentPanel.add(createAppointment);
+		try {
+			String[] temp;
+			Date selectedDate = (Date) datePicker.getModel().getValue();
+			LocalDate localDate = convertDateToLocalDate(selectedDate);
+			String specialization = (String) specializationComboBox.getSelectedItem();
+
+			String hrs = (String) hoursComboBox.getSelectedItem();
+			String mins = (String) minutesComboBox.getSelectedItem();
+
+
+			String timeConcatenate = hrs + ":" + mins + ":00";
+			LocalTime time = convertStringToLocalTime(timeConcatenate);
+
+			List<Doctor> doctors = mainModel.getAvailableDoctors(specialization, localDate, time);
+			List<String> doctorsAvailable = new ArrayList<>();
+			for (Doctor d : doctors) {
+				doctorsAvailable.add(d.getFirstName() + " " + d.getLastName());
+			}
+
+			newAppointmentPanel.remove(doctorList);
+
+			doctorList = new JComboBox(doctorsAvailable.toArray());
+			newAppointmentPanel.add(doctorLabel);
+			newAppointmentPanel.add(doctorList);
+			newAppointmentPanel.add(back);
+			newAppointmentPanel.add(createAppointment);
+			setVisible(true);
+		}
+		catch (Exception e) {
+			showMessage(e.getMessage());
+		}
+	}
+
+	private LocalDate convertDateToLocalDate(Date date) {
+		Instant instant = date.toInstant();
+		ZoneId zoneId = ZoneId.systemDefault();
+		ZonedDateTime zonedDateTime = instant.atZone(zoneId);
+		LocalDate localDate = zonedDateTime.toLocalDate();
+		return localDate;
+	}
+
+	private LocalTime convertStringToLocalTime(String time) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss");
+		return LocalTime.parse(time, formatter);
+	}
+
+	public void showMessage(String message) {
+		JOptionPane.showMessageDialog(newAppointmentPanel, message);
 		setVisible(true);
 	}
 }

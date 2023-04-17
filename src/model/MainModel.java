@@ -33,7 +33,7 @@ public class MainModel implements Model{
   @Override
   public void openDbConnection(String databaseUrl, String username, String password) throws Exception {
     try {
-      Class.forName("com.mysql.cj.jdbc.Driver");
+      //Class.forName("com.mysql.cj.jdbc.Driver");
       conn = DriverManager.getConnection(databaseUrl, username, password);
     } catch (SQLException e) {
       throw new Exception("Could not connect to database. Please make sure that the username" +
@@ -170,6 +170,27 @@ public class MainModel implements Model{
     }
 
     return student;
+  }
+
+  @Override
+  public String getDoctorByName(String first_name, String last_name) {
+    String doc_id = null;
+    String call = "CALL get_doctor_id(?, ?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, first_name);
+      call_stmt.setString(2, last_name);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+
+      // move the cursor once because we know that there will be only one student in the result
+      if(rs.next()) {
+        doc_id = rs.getString("doctor_id");
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return doc_id;
   }
 
   @Override

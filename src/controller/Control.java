@@ -24,7 +24,7 @@ public class Control implements Features {
 	@Override
 	public void makeNewAppointment(Features features) {
 		List<Specialization> specializations = model.getSpecializationList();
-		view.setupForNewAppointment(features, specializations);
+		view.setupForNewAppointment(features, specializations, model);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class Control implements Features {
 
 	@Override
 	public void getAppointmentInfo() {
-		view.createNewAppointment();
+		view.createNewAppointment(model);
 	}
 
 	@Override

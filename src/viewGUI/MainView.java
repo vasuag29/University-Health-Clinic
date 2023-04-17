@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import controller.Features;
 import model.DataTypes.Specialization;
+import model.Model;
 import viewGUI.newAppointment.NewAppointment;
 import viewGUI.showAppointment.ShowAppointment;
 
@@ -52,10 +53,10 @@ public class MainView extends JFrame implements View {
 	}
 
 	@Override
-	public void setupForNewAppointment(Features features, List<Specialization> specializations) {
+	public void setupForNewAppointment(Features features, List<Specialization> specializations, Model model) {
 		appointment = new NewAppointment();
 		setVisible(false);
-		appointment.showNewAppointment(features, specializations);
+		appointment.showNewAppointment(features, specializations, model);
 	}
 
 	@Override
@@ -72,8 +73,8 @@ public class MainView extends JFrame implements View {
 	}
 
 	@Override
-	public void createNewAppointment() {
-		appointment.createAppointment();
+	public void createNewAppointment(Model model) {
+		appointment.createAppointment(model, this);
 	}
 
 	@Override
