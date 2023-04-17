@@ -26,6 +26,7 @@ public interface Model {
                                    LocalDate appointmentDate,
                                    LocalTime appointmentTime);
   String getDoctorByName(String first_name, String last_name);
-
   List<Appointment> getAppointmentsByStudentId(String string);
+  boolean deleteDoctor(String doctorId);
+  boolean deleteAppointment(String appointmentId);
 }

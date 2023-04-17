@@ -221,6 +221,46 @@ public class MainModel implements Model{
   }
 
   @Override
+  public boolean deleteDoctor(String doctorId) {
+    String call = "CALL delete_doctor(?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, doctorId);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+
+      // the return value will be either 1 or 0 (# of rows deleted)
+      if(rs.next()) {
+        String rowsDeleted = rs.getString("rows_deleted");
+        return rowsDeleted.equals("1");
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean deleteAppointment(String appointmentId) {
+    String call = "CALL delete_appointment(?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, appointmentId);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+
+      // the return value will be either 1 or 0 (# of rows deleted)
+      if(rs.next()) {
+        String rowsDeleted = rs.getString("rows_deleted");
+        return rowsDeleted.equals("1");
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return false;
+  }
+
+  @Override
   public Appointment createNewAppointment(String studentId,
                                           String doctorId,
                                           LocalDate appointmentDate,

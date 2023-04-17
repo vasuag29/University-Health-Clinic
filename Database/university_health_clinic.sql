@@ -235,3 +235,48 @@ BEGIN
 END $$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS delete_doctor;
+DELIMITER $$
+CREATE PROCEDURE delete_doctor(IN doc_id VARCHAR(7))
+BEGIN
+  DELETE FROM doctor WHERE doctor_id = doc_id;
+  SELECT ROW_COUNT() AS rows_deleted;
+END $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS delete_appointment;
+DELIMITER $$
+CREATE PROCEDURE delete_appointment(IN app_id VARCHAR(7))
+BEGIN
+  DELETE FROM appointment_booking WHERE appointment_id = app_id;
+  SELECT ROW_COUNT() AS rows_deleted;
+END $$
+DELIMITER ;
+
+
+# ------------------------------------- Triggers -------------------------------------
+DROP TRIGGER IF EXISTS delete_doctor_trigger;
+DELIMITER $$
+CREATE TRIGGER delete_doctor_trigger
+AFTER DELETE ON doctor
+FOR EACH ROW
+BEGIN
+  DELETE FROM appointment_booking WHERE doctor_id = OLD.doctor_id;
+END $$
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS delete_appointment_booking_trigger;
+DELIMITER $$
+CREATE TRIGGER delete_appointment_trigger
+AFTER DELETE ON appointment_booking
+FOR EACH ROW
+BEGIN
+  DELETE FROM appointment WHERE appointment_id = OLD.appointment_id 
+  AND NOT EXISTS (SELECT * FROM appointment_booking WHERE appointment_id = OLD.appointment_id);
+END $$
+DELIMITER ;
+
+
+
+
