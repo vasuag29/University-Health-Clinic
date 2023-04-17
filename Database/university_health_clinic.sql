@@ -38,13 +38,13 @@ university_health_insurance BOOL
 );
 
 CREATE TABLE appointment (
-appointment_id VARCHAR(5) PRIMARY KEY AUTO_INCREMENT,
+appointment_id INT PRIMARY KEY AUTO_INCREMENT,
 appointment_time TIME,
 appointment_date DATE
 );
 
 CREATE TABLE appointment_booking (
-appointment_id VARCHAR(5),
+appointment_id INT,
 doctor_id VARCHAR(7),
 student_id VARCHAR(7),
 FOREIGN KEY (appointment_id) REFERENCES appointment(appointment_id),
@@ -134,7 +134,7 @@ BEGIN
     SELECT COUNT(*) INTO num_available_doctors FROM doctor 
     WHERE specialization = d_specialization;
     
-    IF available_doctors = 0 THEN
+    IF num_available_doctors = 0 THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'No available doctors found';
     ELSE
@@ -159,7 +159,7 @@ CREATE PROCEDURE create_new_appointment (
     IN appointment_time TIME
 )
 BEGIN
-    DECLARE appointment_id VARCHAR(5);
+    DECLARE appointment_id INT;
 
     -- Check if the student exists
     IF NOT EXISTS (SELECT * FROM student WHERE student_id = student_id) THEN
@@ -178,10 +178,11 @@ BEGIN
 
     -- Check if the appointment time is already taken
     IF EXISTS (
-        SELECT * FROM appointment_booking
-        WHERE appointment_date = appointment_date
-          AND appointment_time = appointment_time
-          AND doctor_id = doctor_id
+        SELECT * FROM appointment_booking AS ab
+        LEFT JOIN appointment AS a ON a.appointment_id = ab.appointment_id
+        WHERE a.appointment_date = appointment_date
+          AND a.appointment_time = appointment_time
+          AND ab.doctor_id = doctor_id
     ) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Appointment time is already taken';
     END IF;
