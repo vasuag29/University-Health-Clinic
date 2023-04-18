@@ -271,9 +271,11 @@ public class MainModel implements Model{
 
   @Override
   public void updateAppointment(String appointmentId, LocalDate newDate, LocalTime newTime) {
-    String call = "CALL update_appointment_datetime(?)";
+    String call = "CALL update_appointment_datetime(?,?,?)";
     try (CallableStatement call_stmt = conn.prepareCall(call)) {
       call_stmt.setString(1, appointmentId);
+      call_stmt.setString(2, newDate.format(sqlDateFormatter));
+      call_stmt.setString(3, newTime.format(sqlTimeFormatter));
       call_stmt.execute(); // if the appointment does not exist, an SQL exception will be thrown
     } catch (SQLException e) {
       throw new RuntimeException(e);

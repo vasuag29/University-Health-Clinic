@@ -306,13 +306,27 @@ CREATE PROCEDURE update_appointment_datetime (
 )
 BEGIN
     DECLARE appointment_exists INT;
+    DECLARE conflict_count INT;
+    
     SELECT COUNT(*) INTO appointment_exists FROM appointment WHERE appointment_id = appointment_id;
     IF appointment_exists = 0 THEN
        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Appointment does not exist.';
-    ELSE
+	END IF;
+    
+	SET conflict_count = (
+    SELECT COUNT(*)
+    FROM appointment
+    WHERE appointment_id != appointment_id_in
+    AND appointment_date = new_appointment_date_in
+    AND appointment_time = new_appointment_time_in);
+    
+    IF conflict_count = 0 THEN
         UPDATE appointment
         SET appointment_date = new_date, appointment_time = new_time
         WHERE appointment_id = appointment_id;
+		SELECT 'Appointment updated successfully';
+	ELSE 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Appointment time conflicts with an existing appointment';
 	END IF;
 END $$
 DELIMITER ;
