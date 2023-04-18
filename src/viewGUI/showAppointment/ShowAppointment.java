@@ -100,7 +100,7 @@ public class ShowAppointment extends JFrame{
 			setVisible(true);
 
 	}
-	public void showMessage(String message) {
+	private void showMessage(String message) {
 		JOptionPane.showMessageDialog(showAppointmentPanel, message);
 		setVisible(true);
 	}

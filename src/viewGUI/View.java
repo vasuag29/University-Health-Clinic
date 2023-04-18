@@ -25,4 +25,6 @@ public interface View {
 	void setupForShowAppointments(Features features);
 
 	void showStudentAppointments(Model model, Features features);
+
+	void cancelAppointment(Model model, View view);
 }

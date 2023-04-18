@@ -95,7 +95,7 @@ public class MainModel implements Model{
   }
 
   @Override
-  public List<Appointment> getAppointmentsByStudentId(String studentId) {
+  public List<Appointment> getAppointmentsByStudentId(String studentId) throws Exception {
     List<Appointment> appointments = null;
 
     String call = "CALL get_appointments_by_student_id(?)";
@@ -104,6 +104,11 @@ public class MainModel implements Model{
       call_stmt.execute();
       ResultSet rs = call_stmt.getResultSet();
       appointments = new ArrayList<>();
+
+      if (!rs.next()) {
+        throw new Exception("No records found for " + studentId);
+      }
+
       while (rs.next()) {
         String apptId = rs.getString("appointment_id");
         LocalDate date = LocalDate.parse(rs.getString("appointment_date"));
@@ -115,14 +120,16 @@ public class MainModel implements Model{
         appointments.add(appointment);
       }
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      throw  e;
+    } catch (Exception e) {
+      throw e;
     }
 
     return appointments;
   }
 
   @Override
-  public List<Appointment> getAllAppointments() {
+  public List<Appointment> getAllAppointments() throws SQLException {
     List<Appointment> appointments = null;
 
     String call = "CALL get_appointments()";
@@ -141,7 +148,7 @@ public class MainModel implements Model{
         appointments.add(appointment);
       }
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      throw e;
     }
 
     return appointments;

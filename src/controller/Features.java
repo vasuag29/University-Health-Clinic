@@ -12,4 +12,6 @@ public interface Features {
 	void showAppointmentsChart(Features features);
 
 	void showStudentAppointments(Features features);
+
+	void cancelAppointment();
 }

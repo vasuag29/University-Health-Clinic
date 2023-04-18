@@ -59,4 +59,9 @@ public class Control implements Features {
 	public void showStudentAppointments(Features features) {
 		view.showStudentAppointments(model, features);
 	}
+
+	@Override
+	public void cancelAppointment() {
+		view.cancelAppointment(model, view);
+	}
 }

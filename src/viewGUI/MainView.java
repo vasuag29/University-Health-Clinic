@@ -8,12 +8,14 @@ import javax.swing.*;
 import controller.Features;
 import model.DataTypes.Specialization;
 import model.Model;
+import viewGUI.cancelAppointment.CancelAppointment;
 import viewGUI.newAppointment.NewAppointment;
 import viewGUI.showAppointment.ShowAppointment;
 
 public class MainView extends JFrame implements View {
 	NewAppointment appointment = new NewAppointment();
 	ShowAppointment showAppointment = new ShowAppointment();
+	CancelAppointment cancelAppointmentObject = new CancelAppointment();
 	JButton newAppointment = new JButton("Create New Appointment");
 	JButton updateAppointment = new JButton("Update Appointment");
 	JButton cancelAppointment = new JButton("Cancel Appointment");
@@ -50,6 +52,7 @@ public class MainView extends JFrame implements View {
 		connect.addActionListener(e -> features.connectToDB());
 		newAppointment.addActionListener(e -> features.makeNewAppointment(features));
 		showAppointments.addActionListener(e -> features.showAppointmentsChart(features));
+		cancelAppointment.addActionListener(e -> features.cancelAppointment());
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class MainView extends JFrame implements View {
 		panel.removeAll();
 		repaint();
 		panel.add(newAppointment);
-		panel.add(updateAppointment);
+		//panel.add(updateAppointment);
 		panel.add(cancelAppointment);
 		panel.add(showAppointments);
 		panel.add(deleteDoctor);
@@ -104,5 +107,12 @@ public class MainView extends JFrame implements View {
 	@Override
 	public void showStudentAppointments(Model model, Features features) {
 		showAppointment.getStudentAppointments(model, features);
+	}
+
+	@Override
+	public void cancelAppointment(Model model, View view) {
+		cancelAppointmentObject = new CancelAppointment();
+		setVisible(false);
+		cancelAppointmentObject.cancelAppointmentObject(view, model);
 	}
 }

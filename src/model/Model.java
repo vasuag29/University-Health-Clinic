@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -18,7 +19,7 @@ public interface Model {
   List<Doctor> getAvailableDoctors(String specializationName,
                                    LocalDate appointmentDate,
                                    LocalTime appointmentTime);
-  List<Appointment> getAllAppointments();
+  List<Appointment> getAllAppointments() throws SQLException;
   List<Specialization> getSpecializationList();
   Student getStudentById(String studentId);
   Appointment createNewAppointment(String studentId,
@@ -26,7 +27,7 @@ public interface Model {
                                    LocalDate appointmentDate,
                                    LocalTime appointmentTime);
   String getDoctorByName(String first_name, String last_name);
-  List<Appointment> getAppointmentsByStudentId(String string);
+  List<Appointment> getAppointmentsByStudentId(String string) throws Exception;
   boolean deleteDoctor(String doctorId);
   boolean deleteAppointment(String appointmentId);
 }
