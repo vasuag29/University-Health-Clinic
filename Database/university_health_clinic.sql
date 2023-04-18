@@ -53,8 +53,15 @@ FOREIGN KEY (student_id) REFERENCES student(student_id)
 );
 
 CREATE TABLE lab_report (
-report_id VARCHAR(7) PRIMARY KEY,
+report_id INT PRIMARY KEY AUTO_INCREMENT,
 report_description TEXT
+);
+
+CREATE TABLE lab_reports_for_appointment (
+report_id INT,
+appointment_id INT,
+FOREIGN KEY (report_id) REFERENCES lab_report(report_id),
+FOREIGN KEY (appointment_id) REFERENCES appointment(appointment_id)
 );
 
 CREATE TABLE diagnosis (
@@ -81,6 +88,23 @@ FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id),
 FOREIGN KEY (student_id) REFERENCES student(student_id),
 FOREIGN KEY (medicine) REFERENCES medicine(name)
 );
+
+
+# ------------------------------------- Functions -------------------------------------
+-- DROP FUNCTION IF EXISTS get_lab_reports;
+-- DELIMITER $$
+-- CREATE FUNCTION get_lab_reports()
+-- RETURNS TABLE
+-- AS
+-- RETURN
+--     SELECT * FROM lab_report;
+-- $$
+-- DELIMITER ;
+
+
+
+
+
 
 # ------------------------------------- Procedures -------------------------------------
 
@@ -120,6 +144,25 @@ BEGIN
 	END IF;
 END $$
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS get_lab_reports;
+DELIMITER $$
+CREATE PROCEDURE get_lab_reports()
+BEGIN
+	DECLARE num_reports INT;
+	
+    SELECT COUNT(*) INTO num_reports FROM lab_report;
+    
+    IF num_reports = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No lab reports found';
+    ELSE
+		SELECT * FROM lab_report;
+	END IF;
+END $$
+DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS get_appointments_by_student_id;
 DELIMITER $$
@@ -254,6 +297,38 @@ END $$
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS update_appointment_datetime;
+DELIMITER $$
+CREATE PROCEDURE update_appointment_datetime (
+    IN appointment_id INT,
+    IN new_date DATE,
+    IN new_time TIME
+)
+BEGIN
+    DECLARE appointment_exists INT;
+    SELECT COUNT(*) INTO appointment_exists FROM appointment WHERE appointment_id = appointment_id;
+    IF appointment_exists = 0 THEN
+       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Appointment does not exist.';
+    ELSE
+        UPDATE appointment
+        SET appointment_date = new_date, appointment_time = new_time
+        WHERE appointment_id = appointment_id;
+	END IF;
+END $$
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS get_appointments_by_month;
+DELIMITER $$
+CREATE PROCEDURE get_appointments_by_month()
+BEGIN
+  SELECT YEAR(appointment_date) AS year, MONTH(appointment_date) AS month, COUNT(*) AS appointment_count
+  FROM appointment
+  GROUP BY YEAR(appointment_date), MONTH(appointment_date);
+END $$
+DELIMITER ;
+
+
 # ------------------------------------- Triggers -------------------------------------
 DROP TRIGGER IF EXISTS delete_doctor_trigger;
 DELIMITER $$
@@ -276,7 +351,5 @@ BEGIN
   AND NOT EXISTS (SELECT * FROM appointment_booking WHERE appointment_id = OLD.appointment_id);
 END $$
 DELIMITER ;
-
-
 
 

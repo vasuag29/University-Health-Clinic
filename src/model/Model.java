@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 import model.DataTypes.Appointment;
 import model.DataTypes.Doctor;
@@ -30,4 +31,6 @@ public interface Model {
   List<Appointment> getAppointmentsByStudentId(String string) throws Exception;
   boolean deleteDoctor(String doctorId);
   boolean deleteAppointment(String appointmentId);
+  void updateAppointment(String appointmentId, LocalDate newDate, LocalTime newTime);
+  Map<String, Integer> getAppointmentsByMonth();
 }
