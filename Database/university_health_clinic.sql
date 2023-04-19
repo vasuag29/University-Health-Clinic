@@ -163,6 +163,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+CALL get_appointments_by_student_id(7654321);
 
 DROP PROCEDURE IF EXISTS get_appointments_by_student_id;
 DELIMITER $$

@@ -121,10 +121,8 @@ public class MainModel implements Model{
         Appointment appointment = new Appointment(apptId, date, time, sId, docId);
         appointments.add(appointment);
       }
-    } catch (SQLException e) {
-      throw  e;
     } catch (Exception e) {
-      throw e;
+      throw  e;
     }
 
     return appointments;

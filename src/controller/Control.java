@@ -69,4 +69,9 @@ public class Control implements Features {
 	public void updateAppointment( Features features) {
 		view.updateAppointment(model, view, features);
 	}
+
+	@Override
+	public void deleteDoctor(Features features) {
+
+	}
 }

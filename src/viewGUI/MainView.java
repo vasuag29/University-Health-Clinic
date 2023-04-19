@@ -63,6 +63,7 @@ public class MainView extends JFrame implements View {
 		showAppointments.addActionListener(e -> features.showAppointmentsChart(features));
 		cancelAppointment.addActionListener(e -> features.cancelAppointment());
 		updateAppointment.addActionListener(e -> features.updateAppointment(features));
+		deleteDoctor.addActionListener(e -> features.deleteDoctor(features));
 	}
 
 	@Override
@@ -83,6 +84,8 @@ public class MainView extends JFrame implements View {
 		panel.add(deleteDoctor);
 		appointment.disableNewAppointmentWindow();
 		showAppointment.disableShowAppointmentWindow();
+		cancelAppointmentObject.disableShowAppointmentWindow();
+		updateAppointmentObject.disableShowAppointmentWindow();
 		setVisible(true);
 	}
 
@@ -144,7 +147,6 @@ public class MainView extends JFrame implements View {
 		Instant instant = date.toInstant();
 		ZoneId zoneId = ZoneId.systemDefault();
 		ZonedDateTime zonedDateTime = instant.atZone(zoneId);
-		LocalDate localDate = zonedDateTime.toLocalDate();
-		return localDate;
+		return zonedDateTime.toLocalDate();
 	}
 }

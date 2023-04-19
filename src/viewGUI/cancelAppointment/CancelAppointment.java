@@ -88,4 +88,9 @@ public class CancelAppointment extends JFrame {
 		JOptionPane.showMessageDialog(cancelAppointment, message);
 		setVisible(true);
 	}
+
+	public void disableShowAppointmentWindow() {
+		setVisible(false);
+		dispose();
+	}
 }

@@ -22,6 +22,7 @@ public class UpdateAppointment extends JFrame {
 	String[] minutes = {"00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"};
 	JLabel newDate = new JLabel("Updated Date");
 	JLabel newTime = new JLabel("Updated Time");
+	JLabel appointmentList = new JLabel("Appointment List");
 	JComboBox hoursComboBox;
 	JComboBox minutesComboBox;
 	JPanel updateAppointmentPanel;
@@ -62,39 +63,50 @@ public class UpdateAppointment extends JFrame {
 		String student = studentText.getText();
 		List<Appointment> appointmentOfStudent = null;
 		try {
-			appointmentOfStudent = model.getAppointmentsByStudentId(student);
-			List<String> appointmentString = new ArrayList<>();
+				appointmentOfStudent = model.getAppointmentsByStudentId(student);
+				List<String> appointmentString = new ArrayList<>();
 
-			for (Appointment a : appointmentOfStudent) {
-				appointmentString.add(a.getAppointmentId());
+				for (Appointment a : appointmentOfStudent) {
+					appointmentString.add(a.getAppointmentId());
+				}
+
+				if (appointmentOfStudent.size() == 0) {
+					showMessage("No Appointments Found");
+					view.showMenu();
+				} else {
+					appList = new JComboBox(appointmentString.toArray());
+					updateAppointmentPanel.add(appointmentList);
+					updateAppointmentPanel.add(appList);
+					updateAppointmentPanel.add(newDate);
+					updateAppointmentPanel.add(hoursComboBox);
+					updateAppointmentPanel.add(minutesComboBox);
+
+					updateAppointmentPanel.add(newTime);
+					updateAppointmentPanel.add(datePicker);
+
+					updateAppointmentPanel.add(update);
+					updateAppointmentPanel.add(back);
+					add(updateAppointmentPanel);
+					setSize(320, 500);
+					setLocation(200, 200);
+					setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					setVisible(true);
+
+					update.addActionListener(e -> getUpdateAppointmentInfo(model, view));
+				}
 			}
-
-			appList = new JComboBox(appointmentString.toArray());
-
-			updateAppointmentPanel.add(appList);
-			updateAppointmentPanel.add(newDate);
-			updateAppointmentPanel.add(hoursComboBox);
-			updateAppointmentPanel.add(minutesComboBox);
-
-			updateAppointmentPanel.add(newTime);
-			updateAppointmentPanel.add(datePicker);
-
-			updateAppointmentPanel.add(update);
-			updateAppointmentPanel.add(back);
-			add(updateAppointmentPanel);
-			setSize(320, 500);
-			setLocation(200, 200);
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setVisible(true);
-
-			update.addActionListener(e -> getUpdateAppointmentInfo(model, view));
-		} catch (Exception e) {
+			catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	private void showMessage(String message) {
+		JOptionPane.showMessageDialog(updateAppointmentPanel, message);
+		setVisible(true);
+	}
 
 	private void getUpdateAppointmentInfo(Model model, View view) {
+		String aptId = (String) appList.getSelectedItem();
 		String hrs = (String) hoursComboBox.getSelectedItem();
 		String mins = (String) minutesComboBox.getSelectedItem();
 		String timeConcatenate = hrs + ":" + mins + ":00";
@@ -102,5 +114,14 @@ public class UpdateAppointment extends JFrame {
 
 		Date selectedDate = (Date) datePicker.getModel().getValue();
 		LocalDate localDate = view.convertDateToLocalDate(selectedDate);
+
+		model.updateAppointment(aptId, localDate, localTime);
+		showMessage("Appointment updated successfully");
+		view.showMenu();
+	}
+
+	public void disableShowAppointmentWindow() {
+		setVisible(false);
+		dispose();
 	}
 }

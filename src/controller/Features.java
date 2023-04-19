@@ -16,4 +16,6 @@ public interface Features {
 	void cancelAppointment();
 
 	void updateAppointment(Features features);
+
+	void deleteDoctor(Features features);
 }
