@@ -90,36 +90,19 @@ FOREIGN KEY (medicine) REFERENCES medicine(name)
 );
 
 
-# ------------------------------------- Functions -------------------------------------
--- DROP FUNCTION IF EXISTS get_lab_reports;
--- DELIMITER $$
--- CREATE FUNCTION get_lab_reports()
--- RETURNS TABLE
--- AS
--- RETURN
---     SELECT * FROM lab_report;
--- $$
--- DELIMITER ;
-
-
-
-
-
-
 # ------------------------------------- Procedures -------------------------------------
 
 DROP PROCEDURE IF EXISTS student_by_id;
 DELIMITER $$
 CREATE PROCEDURE student_by_id(s_id VARCHAR(7))
 BEGIN
-	DECLARE email_id VARCHAR(40);
-	DECLARE std_id VARCHAR(7);
+	DECLARE std_id VARCHAR(40);
     SELECT email_id INTO std_id FROM student WHERE student_id = s_id;
-    
-    IF email_id is NULL THEN
+
+	IF std_id is NULL THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The given student is not found in the records.';
-    ELSE
+	ELSE
 		SELECT * FROM student
 		WHERE student_id = s_id;
 	END IF;
@@ -153,7 +136,6 @@ BEGIN
 	DECLARE num_reports INT;
 	
     SELECT COUNT(*) INTO num_reports FROM lab_report;
-    
     IF num_reports = 0 THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'No lab reports found';
@@ -162,8 +144,6 @@ BEGIN
 	END IF;
 END $$
 DELIMITER ;
-
-CALL get_appointments_by_student_id(7654321);
 
 DROP PROCEDURE IF EXISTS get_appointments_by_student_id;
 DELIMITER $$
@@ -262,6 +242,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS get_doctor_id;
 DELIMITER $$
 CREATE PROCEDURE get_doctor_id(doc_first_name VARCHAR(15), doc_last_name VARCHAR(15))
@@ -269,7 +250,7 @@ BEGIN
 	DECLARE doc_id VARCHAR(7);
     SELECT doctor_id INTO doc_id FROM doctor WHERE first_name = doc_first_name AND last_name = doc_last_name;
     
-    IF doctor_id is NULL THEN
+    IF doc_id is NULL THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The given dcotor is not found in the records.';
     ELSE
@@ -278,6 +259,7 @@ BEGIN
 	END IF;
 END $$
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS delete_doctor;
 DELIMITER $$

@@ -107,10 +107,6 @@ public class MainModel implements Model{
       ResultSet rs = call_stmt.getResultSet();
       appointments = new ArrayList<>();
 
-      if (!rs.next()) {
-        throw new Exception("No records found for " + studentId);
-      }
-
       while (rs.next()) {
         String apptId = rs.getString("appointment_id");
         LocalDate date = LocalDate.parse(rs.getString("appointment_date"));
