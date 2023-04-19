@@ -65,7 +65,7 @@ FOREIGN KEY (appointment_id) REFERENCES appointment(appointment_id)
 );
 
 CREATE TABLE diagnosis (
-report_id VARCHAR(7),
+report_id INT,
 doctor_id VARCHAR(7),
 student_id VARCHAR(7),
 diagnosis_description TEXT,
