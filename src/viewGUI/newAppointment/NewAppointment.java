@@ -52,7 +52,7 @@ public class NewAppointment extends JFrame {
 	/*
 	Window to display get inputs for new appointment.
 	 */
-	public void showNewAppointment(Features features, List<Specialization> specializations, Model model) {
+	public void showNewAppointment(Features features, List<Specialization> specializations, Model model, View view) {
 		hoursComboBox = new JComboBox(hours);
 		minutesComboBox = new JComboBox(minutes);
 		datePicker = new JDatePickerImpl(datePanel);
@@ -88,7 +88,7 @@ public class NewAppointment extends JFrame {
 
 		back.addActionListener(e -> features.showOriginalMenu());
 		createAppointment.addActionListener(e -> features.getAppointmentInfo());
-		specializationComboBox.addActionListener(e -> showDoctorList());
+		specializationComboBox.addActionListener(e -> showDoctorList(view));
 	}
 
 	/*
@@ -104,14 +104,14 @@ public class NewAppointment extends JFrame {
 	 */
 	public void createAppointment(Model model, View view) {
 		Date selectedDate = (Date) datePicker.getModel().getValue();
-		LocalDate localDate = convertDateToLocalDate(selectedDate);
+		LocalDate localDate = view.convertDateToLocalDate(selectedDate);
 
 		String studentUniqueId = studentId.getText();
 
 		String hrs = (String) hoursComboBox.getSelectedItem();
 		String mins = (String) minutesComboBox.getSelectedItem();
 		String timeConcatenate = hrs + ":" + mins + ":00";
-		LocalTime localTime = convertStringToLocalTime(timeConcatenate);
+		LocalTime localTime = view.convertStringToLocalTime(timeConcatenate);
 
 		String doctorName = (String) doctorList.getSelectedItem();
 		String[] doctorNameSplit = doctorName.split(" ");
@@ -121,11 +121,10 @@ public class NewAppointment extends JFrame {
 		view.showMenu();
 	}
 
-	public void showDoctorList() {
-		try {
+	public void showDoctorList(View view) {
 			String[] temp;
 			Date selectedDate = (Date) datePicker.getModel().getValue();
-			LocalDate localDate = convertDateToLocalDate(selectedDate);
+			LocalDate localDate = view.convertDateToLocalDate(selectedDate);
 			String specialization = (String) specializationComboBox.getSelectedItem();
 
 			String hrs = (String) hoursComboBox.getSelectedItem();
@@ -133,7 +132,7 @@ public class NewAppointment extends JFrame {
 
 
 			String timeConcatenate = hrs + ":" + mins + ":00";
-			LocalTime time = convertStringToLocalTime(timeConcatenate);
+			LocalTime time = view.convertStringToLocalTime(timeConcatenate);
 
 			List<Doctor> doctors = mainModel.getAvailableDoctors(specialization, localDate, time);
 			List<String> doctorsAvailable = new ArrayList<>();
@@ -149,23 +148,6 @@ public class NewAppointment extends JFrame {
 			newAppointmentPanel.add(back);
 			newAppointmentPanel.add(createAppointment);
 			setVisible(true);
-		}
-		catch (Exception e) {
-			showMessage(e.getMessage());
-		}
-	}
-
-	private LocalDate convertDateToLocalDate(Date date) {
-		Instant instant = date.toInstant();
-		ZoneId zoneId = ZoneId.systemDefault();
-		ZonedDateTime zonedDateTime = instant.atZone(zoneId);
-		LocalDate localDate = zonedDateTime.toLocalDate();
-		return localDate;
-	}
-
-	private LocalTime convertStringToLocalTime(String time) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss");
-		return LocalTime.parse(time, formatter);
 	}
 
 	public void showMessage(String message) {

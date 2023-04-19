@@ -17,11 +17,13 @@ public class CancelAppointment extends JFrame {
 	JComboBox appointmentList = new JComboBox();
 	JButton getAppointments = new JButton("Get Appointments");
 	JLabel appointmentLabel = new JLabel("Select an appointment");
+	JButton back = new JButton("Back to Main Menu");
 	JPanel cancelAppointment;
 	public void cancelAppointmentObject(View view, Model model) {
 		cancelAppointment = new JPanel();
 		cancelAppointment.add(studentLabel);
 		cancelAppointment.add(studentId);
+		cancelAppointment.add(back);
 		cancelAppointment.add(getAppointments);
 		add(cancelAppointment);
 		setLocation(200, 200);
@@ -30,6 +32,7 @@ public class CancelAppointment extends JFrame {
 		setVisible(true);
 
 		getAppointments.addActionListener(e -> showAppointmentsByStudent(model, view));
+		back.addActionListener(e -> view.showMenu());
 	}
 
 	private void showAppointmentsByStudent(Model model, View view) {
@@ -50,6 +53,7 @@ public class CancelAppointment extends JFrame {
 			appointmentList = new JComboBox(appointmentString.toArray());
 			cancelAppointment.add(temp);
 			cancelAppointment.add(appointmentList);
+			cancelAppointment.add(back);
 			cancelAppointment.add(cancel);
 			add(cancelAppointment);
 			setLocation(200, 200);
@@ -58,6 +62,7 @@ public class CancelAppointment extends JFrame {
 			setVisible(true);
 
 			cancel.addActionListener(e -> cancelApp(model, view));
+			back.addActionListener(e -> view.showMenu());
 		} catch (Exception e) {
 			showMessage(e.getMessage());
 			setVisible(false);

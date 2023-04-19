@@ -13,6 +13,7 @@ import model.Model;
 
 public class ShowAppointment extends JFrame{
 	JButton back;
+	JButton showAllAppointments;
 	JButton showAppointmentByStudents;
 	JButton showAppointmentStatistics;
 	JPanel showAppointmentPanel;
@@ -21,13 +22,15 @@ public class ShowAppointment extends JFrame{
 
 	JButton showAppointments;
 
-	public void showSubOptions(Features features) {
+	public void showSubOptions(Features features, Model model) {
 		showAppointmentPanel = new JPanel();
 
 		back = new JButton("Back");
+		showAllAppointments = new JButton("Show All Appointments");
 		showAppointmentByStudents = new JButton("Show a Student's Appointment");
 		showAppointmentStatistics = new JButton("Show Appointment Statistics");
 
+		showAppointmentPanel.add(showAllAppointments);
 		showAppointmentPanel.add(showAppointmentByStudents);
 		showAppointmentPanel.add(showAppointmentStatistics);
 		showAppointmentPanel.add(back);
@@ -40,9 +43,60 @@ public class ShowAppointment extends JFrame{
 
 		back.addActionListener(e -> features.showOriginalMenu());
 		showAppointmentByStudents.addActionListener(e -> features.showStudentAppointments(features));
+		showAllAppointments.addActionListener(e -> showAppointment(model, features));
 	}
 
+	private void showAppointment(Model model, Features features) {
+		showAppointmentPanel.removeAll();
+		revalidate();
+		repaint();
+
+		List<Appointment> ap1 = null;
+		try {
+			ap1 = model.getAllAppointments();
+		} catch (Exception e) {
+			showMessage(e.getMessage());
+		}
+
+		assert ap1 != null;
+		if (ap1.size() > 0) {
+			showTable(ap1, features);
+		} else {
+			showMessage("No Appointments Available");
+			features.showOriginalMenu();
+		}
+	}
+
+	private void showTable(List<Appointment> appointment, Features features) {
+		back = new JButton("Back");
+
+		List<String> columns = new ArrayList<>();
+		List<String[]> values = new ArrayList<String[]>();
+		columns.add("student_id");
+		columns.add("doctor_id");
+		columns.add("appointment_id");
+		columns.add("appointment_time");
+		columns.add("appointment_date");
+
+		for (Appointment value : appointment) {
+			values.add(new String[]{value.getStudentId(),
+							value.getDoctorId(),
+							value.getAppointmentId(),
+							String.valueOf(value.getAppointmentTime()),
+							value.getDoctorId()});
+		}
+
+		TableModel tableModel = new DefaultTableModel(values.toArray(new Object[][]{}), columns.toArray());
+		JTable table = new JTable(tableModel);
+		showAppointmentPanel.add(new JScrollPane(table));
+		showAppointmentPanel.add(back);
+		back.addActionListener(e -> features.showOriginalMenu());
+		add(showAppointmentPanel);
+		setSize(500, 500);
+		setVisible(true);
+	}
 	public void getStudentAppointments(Model model, Features features) {
+		back = new JButton("Back");
 		showAppointmentPanel.removeAll();
 		revalidate();
 		repaint();
@@ -53,6 +107,7 @@ public class ShowAppointment extends JFrame{
 		showAppointmentPanel.add(studentLabel);
 		showAppointmentPanel.add(studentId);
 		showAppointmentPanel.add(showAppointments);
+		showAllAppointments.add(back);
 
 		setSize(300, 500);
 		setLocation(200, 200);
@@ -61,6 +116,7 @@ public class ShowAppointment extends JFrame{
 		setVisible(true);
 
 		showAppointments.addActionListener(e -> showAppointmentsTable(model, features));
+		back.addActionListener(e -> features.showOriginalMenu());
 	}
 
 	private void showAppointmentsTable(Model model, Features features) {
@@ -70,36 +126,22 @@ public class ShowAppointment extends JFrame{
 
 			String studentUniqueId = studentId.getText();
 
-			List<String> columns = new ArrayList<>();
-			List<String[]> values = new ArrayList<String[]>();
-			columns.add("student_id");
-			columns.add("doctor_id");
-			columns.add("appointment_id");
-			columns.add("appointment_time");
-			columns.add("appointment_date");
-			JButton mainMenu = new JButton("Main Menu");
+		List<Appointment> appointments = null;
+		try {
+			appointments = model.getAppointmentsByStudentId(studentUniqueId);
+		} catch (Exception e) {
+			showMessage(e.getMessage());
+		}
 
-			List<Appointment> ap1 = model.getAllAppointments();
-			List<Appointment> appointments = model.getAppointmentsByStudentId(studentUniqueId);
-
-			for (int i = 0; i < appointments.size(); i++) {
-				values.add(new String[]{appointments.get(i).getStudentId(),
-								appointments.get(i).getDoctorId(),
-								appointments.get(i).getAppointmentId(),
-								String.valueOf(appointments.get(i).getAppointmentTime()),
-								appointments.get(i).getDoctorId()});
-			}
-
-			TableModel tableModel = new DefaultTableModel(values.toArray(new Object[][]{}), columns.toArray());
-			JTable table = new JTable(tableModel);
-			showAppointmentPanel.add(new JScrollPane(table));
-			showAppointmentPanel.add(back);
-			back.addActionListener(e -> features.showOriginalMenu());
-			add(showAppointmentPanel);
-			setSize(500, 500);
-			setVisible(true);
-
+		assert appointments != null;
+		if (appointments.size() > 0) {
+			showTable(appointments, features);
+		} else {
+			showMessage("No Appointments Available");
+			features.showOriginalMenu();
+		}
 	}
+
 	private void showMessage(String message) {
 		JOptionPane.showMessageDialog(showAppointmentPanel, message);
 		setVisible(true);

@@ -1,6 +1,13 @@
 package viewGUI;
 
 import java.sql.Connection;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.*;
@@ -11,11 +18,13 @@ import model.Model;
 import viewGUI.cancelAppointment.CancelAppointment;
 import viewGUI.newAppointment.NewAppointment;
 import viewGUI.showAppointment.ShowAppointment;
+import viewGUI.updateAppointment.UpdateAppointment;
 
 public class MainView extends JFrame implements View {
 	NewAppointment appointment = new NewAppointment();
 	ShowAppointment showAppointment = new ShowAppointment();
 	CancelAppointment cancelAppointmentObject = new CancelAppointment();
+	UpdateAppointment updateAppointmentObject = new UpdateAppointment();
 	JButton newAppointment = new JButton("Create New Appointment");
 	JButton updateAppointment = new JButton("Update Appointment");
 	JButton cancelAppointment = new JButton("Cancel Appointment");
@@ -53,13 +62,14 @@ public class MainView extends JFrame implements View {
 		newAppointment.addActionListener(e -> features.makeNewAppointment(features));
 		showAppointments.addActionListener(e -> features.showAppointmentsChart(features));
 		cancelAppointment.addActionListener(e -> features.cancelAppointment());
+		updateAppointment.addActionListener(e -> features.updateAppointment(features));
 	}
 
 	@Override
-	public void setupForNewAppointment(Features features, List<Specialization> specializations, Model model) {
+	public void setupForNewAppointment(Features features, List<Specialization> specializations, Model model, View view) {
 		appointment = new NewAppointment();
 		setVisible(false);
-		appointment.showNewAppointment(features, specializations, model);
+		appointment.showNewAppointment(features, specializations, model, view);
 	}
 
 	@Override
@@ -67,7 +77,7 @@ public class MainView extends JFrame implements View {
 		panel.removeAll();
 		repaint();
 		panel.add(newAppointment);
-		//panel.add(updateAppointment);
+		panel.add(updateAppointment);
 		panel.add(cancelAppointment);
 		panel.add(showAppointments);
 		panel.add(deleteDoctor);
@@ -98,10 +108,10 @@ public class MainView extends JFrame implements View {
 	}
 
 	@Override
-	public void setupForShowAppointments(Features features) {
+	public void setupForShowAppointments(Features features, Model model) {
 		showAppointment = new ShowAppointment();
 		setVisible(false);
-		showAppointment.showSubOptions(features);
+		showAppointment.showSubOptions(features, model);
 	}
 
 	@Override
@@ -114,5 +124,27 @@ public class MainView extends JFrame implements View {
 		cancelAppointmentObject = new CancelAppointment();
 		setVisible(false);
 		cancelAppointmentObject.cancelAppointmentObject(view, model);
+	}
+
+	@Override
+	public void updateAppointment(Model model, View view, Features features) {
+		updateAppointmentObject = new UpdateAppointment();
+		setVisible(false);
+		updateAppointmentObject.updateAppointment(model, view, features);
+	}
+
+	@Override
+	public LocalTime convertStringToLocalTime(String time) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss");
+		return LocalTime.parse(time, formatter);
+	}
+
+	@Override
+	public LocalDate convertDateToLocalDate(Date date) {
+		Instant instant = date.toInstant();
+		ZoneId zoneId = ZoneId.systemDefault();
+		ZonedDateTime zonedDateTime = instant.atZone(zoneId);
+		LocalDate localDate = zonedDateTime.toLocalDate();
+		return localDate;
 	}
 }

@@ -360,7 +360,6 @@ public class MainModel implements Model{
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-
     return doctor;
   }
 }
