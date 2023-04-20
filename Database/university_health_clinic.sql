@@ -99,13 +99,9 @@ CREATE PROCEDURE student_by_id(s_id VARCHAR(7))
 BEGIN
 	DECLARE std_id VARCHAR(40);
     SELECT email_id INTO std_id FROM student WHERE student_id = s_id;
-<<<<<<< HEAD
 
-	IF std_id is NULL THEN
-=======
     
     IF std_id is NULL THEN
->>>>>>> a2721c6 (Implemented - 1. show doc info 2. show stu info 3. delete doctor)
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The given student is not found in the records.';
 	ELSE
@@ -266,10 +262,6 @@ BEGIN
 END $$
 DELIMITER ;
 
-<<<<<<< HEAD
-=======
-CALL get_doctor_id('Emily', 'Johnson');
->>>>>>> a2721c6 (Implemented - 1. show doc info 2. show stu info 3. delete doctor)
 
 DROP PROCEDURE IF EXISTS get_doctor_id;
 DELIMITER $$
@@ -277,12 +269,8 @@ CREATE PROCEDURE get_doctor_id(doc_first_name VARCHAR(15), doc_last_name VARCHAR
 BEGIN
 	DECLARE doc_id VARCHAR(7);
     SELECT doctor_id INTO doc_id FROM doctor WHERE first_name = doc_first_name AND last_name = doc_last_name;
-    
-<<<<<<< HEAD
-    IF doc_id is NULL THEN
-=======
+
     IF doc_id IS NULL THEN
->>>>>>> a2721c6 (Implemented - 1. show doc info 2. show stu info 3. delete doctor)
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The given dcotor is not found in the records.';
     ELSE
@@ -354,6 +342,70 @@ BEGIN
   SELECT YEAR(appointment_date) AS year, MONTH(appointment_date) AS month, COUNT(*) AS appointment_count
   FROM appointment
   GROUP BY YEAR(appointment_date), MONTH(appointment_date);
+END $$
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS add_doctor;
+DELIMITER $$
+CREATE PROCEDURE add_doctor (
+  IN p_doctor_id VARCHAR(7),
+  IN p_first_name VARCHAR(15),
+  IN p_last_name VARCHAR(15),
+  IN p_email_id VARCHAR(40),
+  IN p_qualification VARCHAR(10),
+  IN p_phone_number VARCHAR(10),
+  IN p_specialization VARCHAR(40)
+)
+BEGIN
+  DECLARE specialization_exists INT;
+  DECLARE qualification_exists INT;
+  DECLARE email_exists INT;
+  DECLARE phone_exists INT;
+  DECLARE id_exists INT;
+  
+  -- Check if specialization exists
+  SELECT COUNT(*) INTO specialization_exists FROM specialization WHERE name = p_specialization;
+  IF specialization_exists = 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Specialization does not exist';
+  END IF;
+  
+  -- Check if qualification exists
+  SELECT COUNT(*) INTO qualification_exists FROM qualification WHERE abbreviation = p_qualification;
+  IF qualification_exists = 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Qualification does not exist';
+  END IF;
+  
+  -- Check if email already exists
+  SELECT COUNT(*) INTO email_exists FROM doctor WHERE email_id = p_email_id;
+  IF email_exists > 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Email already exists';
+  END IF;
+  
+  -- Check if phone number already exists
+  SELECT COUNT(*) INTO phone_exists FROM doctor WHERE phone_number = p_phone_number;
+  IF phone_exists > 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Phone number already exists';
+  END IF;
+  
+  -- Check if doctor_id already exists
+  SELECT COUNT(*) INTO id_exists FROM doctor WHERE doctor_id = p_doctor_id;
+  IF id_exists > 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Doctor ID already exists';
+  END IF;
+  
+  -- Insert new doctor
+  INSERT INTO doctor (doctor_id, first_name, last_name, email_id, qualification, phone_number, specialization)
+  VALUES (p_doctor_id, p_first_name, p_last_name, p_email_id, p_qualification, p_phone_number, p_specialization);
+  
+  SELECT * FROM doctor
+  WHERE doctor_id = p_doctor_id;
+  
 END $$
 DELIMITER ;
 

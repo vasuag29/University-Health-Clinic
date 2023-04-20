@@ -16,6 +16,7 @@ import java.util.Map;
 
 import model.DataTypes.Appointment;
 import model.DataTypes.Doctor;
+import model.DataTypes.Qualification;
 import model.DataTypes.Specialization;
 import model.DataTypes.Student;
 
@@ -169,6 +170,27 @@ public class MainModel implements Model{
     }
 
     return specializations;
+  }
+
+  @Override
+  public List<Qualification> getQualificationList() {
+    List<Qualification> qualifications = null;
+
+    try {
+      ResultSet rs = executeSqlQuery("SELECT * FROM qualification");
+      qualifications = new ArrayList<>();
+      while (rs.next()) {
+        String abbr = rs.getString("abbreviation");
+        String name = rs.getString("name");
+
+        Qualification qualification = new Qualification(abbr, name);
+        qualifications.add(qualification);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return qualifications;
   }
 
   @Override
@@ -381,5 +403,34 @@ public class MainModel implements Model{
       throw new RuntimeException(e);
     }
     return doctor;
+  }
+
+  @Override
+  public Doctor addNewDoctor(String docId, String fName, String lName,
+                             String emailId, String qualification, String phNumber,
+                             String specialization) throws SQLException {
+    Doctor newDoctor = null;
+
+    String call = "CALL add_doctor(?,?,?,?,?,?,?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, docId);
+      call_stmt.setString(2, fName);
+      call_stmt.setString(3, lName);
+      call_stmt.setString(4, emailId);
+      call_stmt.setString(5, qualification);
+      call_stmt.setString(6, phNumber);
+      call_stmt.setString(7, specialization);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+
+      // move the cursor once because we know that there will be only one doctor in the result
+      if(rs.next()) {
+        newDoctor = readDoctorDataFromResultSet(rs);
+      }
+    } catch (SQLException e) {
+      throw e;
+    }
+
+    return newDoctor;
   }
 }
