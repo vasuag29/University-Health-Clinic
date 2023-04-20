@@ -22,4 +22,6 @@ public interface Features {
 	void showDoctor(Features features);
 
 	void showStudent(Features features);
+
+	void addDoc(Features features);
 }

@@ -38,4 +38,6 @@ public interface View {
 
 	void showDocInfo(Features features, Model model, View view);
 	void showStuInfo(Features features, Model model, View view);
+
+	void addDocInfo(Features features, Model model, View view);
 }

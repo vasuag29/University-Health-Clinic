@@ -66,7 +66,6 @@ public class ShowDoctorInfo extends JFrame {
 	}
 
 	private void showTable(Doctor doctor, View view) {
-
 		back = new JButton("Back");
 
 		List<String> columns = new ArrayList<>();

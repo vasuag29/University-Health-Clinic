@@ -18,6 +18,7 @@ import model.Model;
 import viewGUI.cancelAppointment.CancelAppointment;
 import viewGUI.deleteDoctor.DeleteDoctor;
 import viewGUI.newAppointment.NewAppointment;
+import viewGUI.newDoctor.NewDoctor;
 import viewGUI.showAppointment.ShowAppointment;
 import viewGUI.showInfo.ShowDoctorInfo;
 import viewGUI.showInfo.ShowStudentInfo;
@@ -25,6 +26,7 @@ import viewGUI.updateAppointment.UpdateAppointment;
 
 public class MainView extends JFrame implements View {
 	NewAppointment appointment = new NewAppointment();
+	NewDoctor newDoc = new NewDoctor();
 	ShowAppointment showAppointment = new ShowAppointment();
 	CancelAppointment cancelAppointmentObject = new CancelAppointment();
 	UpdateAppointment updateAppointmentObject = new UpdateAppointment();
@@ -33,6 +35,7 @@ public class MainView extends JFrame implements View {
 	ShowStudentInfo showStudent = new ShowStudentInfo();
 
 	JButton newAppointment = new JButton("Create New Appointment");
+	JButton addNewDoc = new JButton("Add New Doctor");
 	JButton updateAppointment = new JButton("Update Appointment");
 	JButton cancelAppointment = new JButton("Cancel Appointment");
 	JButton showAppointments = new JButton("Show Appointments");
@@ -75,6 +78,7 @@ public class MainView extends JFrame implements View {
 		deleteDoctor.addActionListener(e -> features.deleteDoctor(features));
 		showStudentInfo.addActionListener(e -> features.showStudent(features));
 		showDoctorInfo.addActionListener(e -> features.showDoctor(features));
+		addNewDoc.addActionListener(e -> features.addDoc(features));
 	}
 
 	@Override
@@ -89,6 +93,7 @@ public class MainView extends JFrame implements View {
 		panel.removeAll();
 		repaint();
 		panel.add(newAppointment);
+		panel.add(addNewDoc);
 		panel.add(updateAppointment);
 		panel.add(cancelAppointment);
 		panel.add(showAppointments);
@@ -102,6 +107,7 @@ public class MainView extends JFrame implements View {
 		deleteDoctorObject.disableDeleteDoctorWindow();
 		showStudent.disableStudentInfoWindow();
 		showDoctor.disableDoctorInfoWindow();
+		newDoc.disableDoctorInfoWindow();
 		setVisible(true);
 	}
 
@@ -185,5 +191,12 @@ public class MainView extends JFrame implements View {
 		showStudent = new ShowStudentInfo();
 		setVisible(false);
 		showStudent.showStudentInfo(features, model, view);
+	}
+
+	@Override
+	public void addDocInfo(Features features, Model model, View view) {
+		newDoc = new NewDoctor();
+		setVisible(false);
+		newDoc.addNewDoctor(features, view, model);
 	}
 }

@@ -84,4 +84,9 @@ public class Control implements Features {
 	public void showStudent(Features features) {
 		view.showStuInfo(features, model, view);
 	}
+
+	@Override
+	public void addDoc(Features features) {
+		view.addDocInfo(features, model, view);
+	}
 }
