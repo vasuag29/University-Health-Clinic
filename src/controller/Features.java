@@ -24,4 +24,6 @@ public interface Features {
 	void showStudent(Features features);
 
 	void addDoc(Features features);
+
+	void addTest(Features features);
 }

@@ -1,8 +1,14 @@
 package viewGUI.newDoctor;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 
 import controller.Features;
+import model.DataTypes.Qualification;
+import model.DataTypes.Specialization;
 import model.Model;
 import viewGUI.View;
 
@@ -34,13 +40,28 @@ public class NewDoctor extends JFrame {
 		qualificationLabel = new JLabel("Qualification");
 		specializationLabel = new JLabel("Specialization");
 
-		doctorId = new JTextField(10);
-		firstName = new JTextField(10);
-		lastName = new JTextField(10);
-		phone_number = new JTextField(10);
-		email_id = new JTextField(10);
-		qualification = new JComboBox<>();
-		specialization = new JComboBox<>();
+		doctorId = new JTextField(12);
+		firstName = new JTextField(12);
+		lastName = new JTextField(12);
+		phone_number = new JTextField(12);
+		email_id = new JTextField(12);
+
+		List<Specialization> spec = model.getSpecializationList();
+		List<String> temp = new ArrayList<>();
+
+		for (Specialization s : spec) {
+			temp.add(s.getSpecializationName());
+		}
+
+		specialization = new JComboBox(temp.toArray());
+
+		List<Qualification> qua = model.getQualificationList();
+		temp = new ArrayList<>();
+
+		for(Qualification q : qua) {
+			temp.add(q.abbreviation());
+		}
+		qualification = new JComboBox(temp.toArray());
 
 		newDoctorPanel.add(doctorLabel);
 		newDoctorPanel.add(doctorId);
@@ -59,6 +80,13 @@ public class NewDoctor extends JFrame {
 		newDoctorPanel.add(add);
 		newDoctorPanel.add(back);
 
+		add(newDoctorPanel);
+		setLocation(200, 200);
+		setSize(260, 500);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
+		setResizable(false);
+
 		add.addActionListener(e -> addDoctor(view, model));
 		back.addActionListener(e -> view.showMenu());
 	}
@@ -73,8 +101,12 @@ public class NewDoctor extends JFrame {
 			String firstN = firstName.getText();
 			String lastN = lastName.getText();
 
+			model.addNewDoctor(doctor, firstN, lastN, email, quali, phone, spec);
+			showMessage("New Doctor Added Successfully!");
+			view.showMenu();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
+			view.showMenu();
 		}
 	}
 

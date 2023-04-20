@@ -89,4 +89,9 @@ public class Control implements Features {
 	public void addDoc(Features features) {
 		view.addDocInfo(features, model, view);
 	}
+
+	@Override
+	public void addTest(Features features) {
+		view.addTest(features, model, view);
+	}
 }

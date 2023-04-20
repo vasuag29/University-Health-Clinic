@@ -97,6 +97,7 @@ public class UpdateAppointment extends JFrame {
 			}
 			catch (Exception e) {
 			showMessage(e.getMessage());
+			view.showMenu();
 		}
 	}
 
@@ -106,18 +107,23 @@ public class UpdateAppointment extends JFrame {
 	}
 
 	private void getUpdateAppointmentInfo(Model model, View view) {
-		String aptId = (String) appList.getSelectedItem();
-		String hrs = (String) hoursComboBox.getSelectedItem();
-		String mins = (String) minutesComboBox.getSelectedItem();
-		String timeConcatenate = hrs + ":" + mins + ":00";
-		LocalTime localTime = view.convertStringToLocalTime(timeConcatenate);
+		try {
+			String aptId = (String) appList.getSelectedItem();
+			String hrs = (String) hoursComboBox.getSelectedItem();
+			String mins = (String) minutesComboBox.getSelectedItem();
+			String timeConcatenate = hrs + ":" + mins + ":00";
+			LocalTime localTime = view.convertStringToLocalTime(timeConcatenate);
 
-		Date selectedDate = (Date) datePicker.getModel().getValue();
-		LocalDate localDate = view.convertDateToLocalDate(selectedDate);
+			Date selectedDate = (Date) datePicker.getModel().getValue();
+			LocalDate localDate = view.convertDateToLocalDate(selectedDate);
 
-		model.updateAppointment(aptId, localDate, localTime);
-		showMessage("Appointment updated successfully");
-		view.showMenu();
+			model.updateAppointment(aptId, localDate, localTime);
+			showMessage("Appointment updated successfully");
+			view.showMenu();
+		} catch (Exception e) {
+			showMessage(e.getMessage());
+			view.showMenu();
+		}
 	}
 
 	public void disableShowAppointmentWindow() {

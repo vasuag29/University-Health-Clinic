@@ -15,6 +15,7 @@ import javax.swing.*;
 import controller.Features;
 import model.DataTypes.Specialization;
 import model.Model;
+import viewGUI.addTestToAppointment.AddTestToAppointment;
 import viewGUI.cancelAppointment.CancelAppointment;
 import viewGUI.deleteDoctor.DeleteDoctor;
 import viewGUI.newAppointment.NewAppointment;
@@ -33,9 +34,11 @@ public class MainView extends JFrame implements View {
 	DeleteDoctor deleteDoctorObject = new DeleteDoctor();
 	ShowDoctorInfo showDoctor = new ShowDoctorInfo();
 	ShowStudentInfo showStudent = new ShowStudentInfo();
+	AddTestToAppointment addTestApp = new AddTestToAppointment();
 
 	JButton newAppointment = new JButton("Create New Appointment");
 	JButton addNewDoc = new JButton("Add New Doctor");
+	JButton addTest = new JButton("Add Test to Appointment");
 	JButton updateAppointment = new JButton("Update Appointment");
 	JButton cancelAppointment = new JButton("Cancel Appointment");
 	JButton showAppointments = new JButton("Show Appointments");
@@ -79,6 +82,7 @@ public class MainView extends JFrame implements View {
 		showStudentInfo.addActionListener(e -> features.showStudent(features));
 		showDoctorInfo.addActionListener(e -> features.showDoctor(features));
 		addNewDoc.addActionListener(e -> features.addDoc(features));
+		addTest.addActionListener(e -> features.addTest(features));
 	}
 
 	@Override
@@ -94,6 +98,7 @@ public class MainView extends JFrame implements View {
 		repaint();
 		panel.add(newAppointment);
 		panel.add(addNewDoc);
+		panel.add(addTest);
 		panel.add(updateAppointment);
 		panel.add(cancelAppointment);
 		panel.add(showAppointments);
@@ -198,5 +203,12 @@ public class MainView extends JFrame implements View {
 		newDoc = new NewDoctor();
 		setVisible(false);
 		newDoc.addNewDoctor(features, view, model);
+	}
+
+	@Override
+	public void addTest(Features features, Model model, View view) {
+		addTestApp = new AddTestToAppointment();
+		setVisible(false);
+		addTestApp.addTestToAppointment(features, view, model);
 	}
 }
