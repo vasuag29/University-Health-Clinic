@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import model.DataTypes.Appointment;
+import model.DataTypes.AppointmentStat;
 import model.DataTypes.Doctor;
 import model.DataTypes.LabTest;
 import model.DataTypes.Qualification;
@@ -36,7 +37,7 @@ public interface Model {
   boolean deleteDoctor(String doctorId) throws SQLException;
   boolean deleteAppointment(String appointmentId);
   void updateAppointment(String appointmentId, LocalDate newDate, LocalTime newTime);
-  Map<String, Integer> getAppointmentsByMonth();
+  List<AppointmentStat> getAppointmentsByMonth();
   Doctor getDoctorById(String doctorId);
 
   Doctor addNewDoctor(String docId, String fName, String lName,

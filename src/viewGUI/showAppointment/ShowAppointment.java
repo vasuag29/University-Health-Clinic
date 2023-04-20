@@ -1,7 +1,14 @@
 	package viewGUI.showAppointment;
 
+	import org.jfree.chart.ChartFactory;
+	import org.jfree.chart.ChartPanel;
+	import org.jfree.chart.JFreeChart;
+	import org.jfree.data.category.DefaultCategoryDataset;
+	import org.jfree.data.general.Dataset;
+
 	import java.util.ArrayList;
 	import java.util.List;
+	import java.util.Map;
 
 	import javax.swing.*;
 	import javax.swing.table.DefaultTableModel;
@@ -9,6 +16,7 @@
 
 	import controller.Features;
 	import model.DataTypes.Appointment;
+	import model.DataTypes.AppointmentStat;
 	import model.Model;
 
 	public class ShowAppointment extends JFrame{
@@ -43,6 +51,7 @@
 			back.addActionListener(e -> features.showOriginalMenu());
 			showAppointmentByStudents.addActionListener(e -> features.showStudentAppointments(features));
 			showAllAppointments.addActionListener(e -> showAppointment(model, features));
+			showAppointmentStatistics.addActionListener(e -> showChart(model, features));
 		}
 
 		private void showAppointment(Model model, Features features) {
@@ -131,6 +140,43 @@
 				showMessage(e.getMessage());
 				features.showOriginalMenu();
 			}
+		}
+
+		private void showChart(Model model, Features features) {
+			showAppointmentPanel.removeAll();
+			revalidate();
+			repaint();
+			DefaultCategoryDataset dataset = createPerformanceDataset(model.getAppointmentsByMonth());
+
+			// Create chart
+			JFreeChart chart = ChartFactory.createLineChart(
+							"Monthly Appointments", // Chart title
+							"Months", // X-Axis Label
+							"Appointments", // Y-Axis Label
+							dataset
+			);
+
+			ChartPanel chartPanel = new ChartPanel(chart);
+			showAppointmentPanel.add(chartPanel);
+			showAppointmentPanel.add(back);
+			add(showAppointmentPanel);
+			setSize(1200, 900);
+			setLocation(200, 200);
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			add(showAppointmentPanel);
+			setVisible(true);
+		}
+
+		private DefaultCategoryDataset createPerformanceDataset(List<AppointmentStat> data) {
+			DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+			for(AppointmentStat item : data) {
+				dataset.addValue(item.appointments,
+								"Appointment count",
+								item.month);
+			}
+
+			return dataset;
 		}
 
 		private void showMessage(String message) {

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import model.DataTypes.Appointment;
+import model.DataTypes.AppointmentStat;
 import model.DataTypes.Doctor;
 import model.DataTypes.LabTest;
 import model.DataTypes.Qualification;
@@ -320,20 +321,20 @@ public class MainModel implements Model{
   }
 
   @Override
-  public Map<String, Integer> getAppointmentsByMonth() {
-    Map<String, Integer> appointmentsByMonth = null;
+  public List<AppointmentStat> getAppointmentsByMonth() {
+    List<AppointmentStat> appointmentsByMonth = null;
 
     String call = "CALL get_appointments_by_month()";
     try (CallableStatement call_stmt = conn.prepareCall(call)) {
       call_stmt.execute();
       ResultSet rs = call_stmt.getResultSet();
-      appointmentsByMonth = new HashMap<>();
+      appointmentsByMonth = new ArrayList<>();
       while (rs.next()) {
         String year = rs.getString("year");
         String month = rs.getString("month");
         String monthWithYear = month + " " + year;
         int appointmentCount = rs.getInt("appointment_count");
-        appointmentsByMonth.put(monthWithYear, appointmentCount);
+        appointmentsByMonth.add(new AppointmentStat(monthWithYear, appointmentCount));
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
