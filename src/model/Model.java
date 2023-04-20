@@ -9,6 +9,7 @@ import java.util.Map;
 
 import model.DataTypes.Appointment;
 import model.DataTypes.Doctor;
+import model.DataTypes.LabTest;
 import model.DataTypes.Qualification;
 import model.DataTypes.Specialization;
 import model.DataTypes.Student;
@@ -24,6 +25,7 @@ public interface Model {
   List<Appointment> getAllAppointments() throws SQLException;
   List<Specialization> getSpecializationList();
   List<Qualification> getQualificationList();
+  List<LabTest> getLabTestList();
   Student getStudentById(String studentId);
   Appointment createNewAppointment(String studentId,
                                    String doctorId,
@@ -40,4 +42,6 @@ public interface Model {
   Doctor addNewDoctor(String docId, String fName, String lName,
                       String emailId, String qualification, String phNumber,
                       String specialization) throws SQLException;
+
+  LabTest addLabTestToAppointment(String testName, String appointmentId) throws SQLException;
 }

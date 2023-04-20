@@ -52,6 +52,18 @@ FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id),
 FOREIGN KEY (student_id) REFERENCES student(student_id)
 );
 
+CREATE TABLE lab_test (
+test_name VARCHAR(100) PRIMARY KEY,
+test_description TEXT
+);
+
+CREATE TABLE lab_test_for_appointment(
+test_name VARCHAR(100),
+appointment_id INT,
+FOREIGN KEY (test_name) REFERENCES lab_test(test_name),
+FOREIGN KEY (appointment_id) REFERENCES appointment(appointment_id)
+);
+
 CREATE TABLE lab_report (
 report_id INT PRIMARY KEY AUTO_INCREMENT,
 report_description TEXT
@@ -407,6 +419,29 @@ BEGIN
   WHERE doctor_id = p_doctor_id;
   
 END $$
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS add_test_to_appointment;
+DELIMITER $$
+CREATE PROCEDURE add_test_to_appointment (
+  IN lab_test_name TEXT,
+  IN appt_id INT
+)
+BEGIN
+  IF NOT EXISTS (SELECT * FROM appointment WHERE appointment_id = appt_id) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Error: Appointment ID does not exist.';
+  END IF;
+  
+  IF NOT EXISTS (SELECT * FROM lab_test WHERE test_name = lab_test_name) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Error: Lab test does not exist.';
+  END IF;
+  
+  INSERT INTO lab_test_for_appointment (test_name, appointment_id) VALUES (lab_test_name, appt_id);
+  SELECT * FROM lab_test_for_appointment WHERE test_name = lab_test_name;
+END$$
 DELIMITER ;
 
 

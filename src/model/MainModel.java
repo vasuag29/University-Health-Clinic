@@ -16,6 +16,7 @@ import java.util.Map;
 
 import model.DataTypes.Appointment;
 import model.DataTypes.Doctor;
+import model.DataTypes.LabTest;
 import model.DataTypes.Qualification;
 import model.DataTypes.Specialization;
 import model.DataTypes.Student;
@@ -191,6 +192,27 @@ public class MainModel implements Model{
     }
 
     return qualifications;
+  }
+
+  @Override
+  public List<LabTest> getLabTestList() {
+    List<LabTest> tests = null;
+
+    try {
+      ResultSet rs = executeSqlQuery("SELECT * FROM lab_test");
+      tests = new ArrayList<>();
+      while (rs.next()) {
+        String name = rs.getString("test_name");
+        String description = rs.getString("test_description");
+
+        LabTest test = new LabTest(name, description);
+        tests.add(test);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return tests;
   }
 
   @Override
@@ -432,5 +454,29 @@ public class MainModel implements Model{
     }
 
     return newDoctor;
+  }
+
+  @Override
+  public LabTest addLabTestToAppointment(String testName, String appointmentId) throws SQLException {
+    LabTest labTest = null;
+
+    String call = "CALL add_test_to_appointment(?,?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, testName);
+      call_stmt.setString(2, appointmentId);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+
+      // move the cursor once because we know that there will be only one lab test in the result
+      if(rs.next()) {
+        String name = rs.getString("test_name");
+        String description = rs.getString("test_description");
+        labTest = new LabTest(name, description);
+      }
+    } catch (SQLException e) {
+      throw e;
+    }
+
+    return labTest;
   }
 }
