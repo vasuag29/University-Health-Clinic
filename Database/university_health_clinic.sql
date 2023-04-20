@@ -92,19 +92,43 @@ FOREIGN KEY (medicine) REFERENCES medicine(name)
 
 # ------------------------------------- Procedures -------------------------------------
 
+CALL student_by_id('7654321');
 DROP PROCEDURE IF EXISTS student_by_id;
 DELIMITER $$
 CREATE PROCEDURE student_by_id(s_id VARCHAR(7))
 BEGIN
 	DECLARE std_id VARCHAR(40);
     SELECT email_id INTO std_id FROM student WHERE student_id = s_id;
+<<<<<<< HEAD
 
 	IF std_id is NULL THEN
+=======
+    
+    IF std_id is NULL THEN
+>>>>>>> a2721c6 (Implemented - 1. show doc info 2. show stu info 3. delete doctor)
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The given student is not found in the records.';
 	ELSE
 		SELECT * FROM student
 		WHERE student_id = s_id;
+	END IF;
+END $$
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS doctor_by_id;
+DELIMITER $$
+CREATE PROCEDURE doctor_by_id(d_id VARCHAR(7))
+BEGIN
+	DECLARE doc_id VARCHAR(40);
+    SELECT email_id INTO doc_id FROM doctor WHERE doctor_id = d_id;
+    
+    IF doc_id is NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'The given student is not found in the records.';
+    ELSE
+		SELECT * FROM doctor
+		WHERE doctor_id = d_id;
 	END IF;
 END $$
 DELIMITER ;
@@ -151,7 +175,7 @@ CREATE PROCEDURE get_appointments_by_student_id(stu_id VARCHAR(7))
 BEGIN
 	DECLARE num_appts INT;
 	
-    SELECT COUNT(*) INTO num_appts FROM appointment_booking;
+    SELECT COUNT(*) INTO num_appts FROM appointment_booking where student_id = stu_id;
     
     IF num_appts = 0 THEN
 		SIGNAL SQLSTATE '45000'
@@ -203,12 +227,12 @@ BEGIN
     DECLARE appointment_id INT;
 
     -- Check if the student exists
-    IF NOT EXISTS (SELECT * FROM student WHERE student_id = student_id) THEN
+    IF NOT EXISTS (SELECT * FROM student s WHERE s.student_id = student_id) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Student not found';
     END IF;
 
     -- Check if the doctor exists
-    IF NOT EXISTS (SELECT * FROM doctor WHERE doctor_id = doctor_id) THEN
+    IF NOT EXISTS (SELECT * FROM doctor d WHERE d.doctor_id = doctor_id) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Doctor not found';
     END IF;
 
@@ -242,6 +266,10 @@ BEGIN
 END $$
 DELIMITER ;
 
+<<<<<<< HEAD
+=======
+CALL get_doctor_id('Emily', 'Johnson');
+>>>>>>> a2721c6 (Implemented - 1. show doc info 2. show stu info 3. delete doctor)
 
 DROP PROCEDURE IF EXISTS get_doctor_id;
 DELIMITER $$
@@ -250,7 +278,11 @@ BEGIN
 	DECLARE doc_id VARCHAR(7);
     SELECT doctor_id INTO doc_id FROM doctor WHERE first_name = doc_first_name AND last_name = doc_last_name;
     
+<<<<<<< HEAD
     IF doc_id is NULL THEN
+=======
+    IF doc_id IS NULL THEN
+>>>>>>> a2721c6 (Implemented - 1. show doc info 2. show stu info 3. delete doctor)
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'The given dcotor is not found in the records.';
     ELSE

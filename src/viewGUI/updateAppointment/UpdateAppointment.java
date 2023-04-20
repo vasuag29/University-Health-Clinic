@@ -96,7 +96,7 @@ public class UpdateAppointment extends JFrame {
 				}
 			}
 			catch (Exception e) {
-			throw new RuntimeException(e);
+			showMessage(e.getMessage());
 		}
 	}
 

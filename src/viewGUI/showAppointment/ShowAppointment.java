@@ -17,10 +17,9 @@
 		JButton showAppointmentByStudents;
 		JButton showAppointmentStatistics;
 		JPanel showAppointmentPanel;
-		JTextField studentId;
-		JLabel studentLabel;
-
-		JButton showAppointments;
+		JLabel studentLabel = new JLabel("Student id");
+		JTextField studentId = new JTextField(10);
+		JButton showAppointments = new JButton("Show Appointments");
 
 		public void showSubOptions(Features features, Model model) {
 			showAppointmentPanel = new JPanel();
@@ -71,7 +70,7 @@
 			back = new JButton("Back");
 
 			List<String> columns = new ArrayList<>();
-			List<String[]> values = new ArrayList<String[]>();
+			List<String[]> values = new ArrayList<>();
 			columns.add("student_id");
 			columns.add("doctor_id");
 			columns.add("appointment_id");
@@ -83,7 +82,7 @@
 								value.getDoctorId(),
 								value.getAppointmentId(),
 								String.valueOf(value.getAppointmentTime()),
-								value.getDoctorId()});
+								value.getAppointmentDate().toString()});
 			}
 
 			TableModel tableModel = new DefaultTableModel(values.toArray(new Object[][]{}), columns.toArray());
@@ -100,9 +99,7 @@
 			showAppointmentPanel.removeAll();
 			revalidate();
 			repaint();
-			studentLabel = new JLabel("Student id");
-			studentId = new JTextField(10);
-			showAppointments = new JButton("Show Appointments");
+
 
 			showAppointmentPanel.add(studentLabel);
 			showAppointmentPanel.add(studentId);
@@ -126,18 +123,12 @@
 
 			String studentUniqueId = studentId.getText();
 
-			List<Appointment> appointments = null;
+			List<Appointment> appointments = new ArrayList<>();
 			try {
 				appointments = model.getAppointmentsByStudentId(studentUniqueId);
+				showTable(appointments, features);
 			} catch (Exception e) {
 				showMessage(e.getMessage());
-			}
-
-			assert appointments != null;
-			if (appointments.size() > 0) {
-				showTable(appointments, features);
-			} else {
-				showMessage("No Appointments Available");
 				features.showOriginalMenu();
 			}
 		}

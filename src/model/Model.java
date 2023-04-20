@@ -19,18 +19,19 @@ public interface Model {
   List<Doctor> getAllDoctors();
   List<Doctor> getAvailableDoctors(String specializationName,
                                    LocalDate appointmentDate,
-                                   LocalTime appointmentTime);
+                                   LocalTime appointmentTime) throws SQLException;
   List<Appointment> getAllAppointments() throws SQLException;
   List<Specialization> getSpecializationList();
   Student getStudentById(String studentId);
   Appointment createNewAppointment(String studentId,
                                    String doctorId,
                                    LocalDate appointmentDate,
-                                   LocalTime appointmentTime);
+                                   LocalTime appointmentTime) throws SQLException;
   String getDoctorByName(String first_name, String last_name);
   List<Appointment> getAppointmentsByStudentId(String string) throws Exception;
-  boolean deleteDoctor(String doctorId);
+  boolean deleteDoctor(String doctorId) throws SQLException;
   boolean deleteAppointment(String appointmentId);
   void updateAppointment(String appointmentId, LocalDate newDate, LocalTime newTime);
   Map<String, Integer> getAppointmentsByMonth();
+  Doctor getDoctorById(String doctorId);
 }

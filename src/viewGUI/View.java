@@ -33,6 +33,9 @@ public interface View {
 
 	void updateAppointment(Model model, View view,  Features features);
 	LocalTime convertStringToLocalTime(String time);
+	LocalDate convertDateToLocalDate(Date date);
+	void deleteDoctor(Features features, Model model, View view);
 
-	public LocalDate convertDateToLocalDate(Date date);
+	void showDocInfo(Features features, Model model, View view);
+	void showStuInfo(Features features, Model model, View view);
 }

@@ -73,7 +73,7 @@ public class MainModel implements Model{
   @Override
   public List<Doctor> getAvailableDoctors(String specializationName,
                                           LocalDate appointmentDate,
-                                          LocalTime appointmentTime) {
+                                          LocalTime appointmentTime) throws SQLException {
     List<Doctor> doctors = null;
 
     String call = "CALL get_available_doctors(?,?,?)";
@@ -90,7 +90,7 @@ public class MainModel implements Model{
         doctors.add(doctor);
       }
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      throw e;
     }
 
     return doctors;
@@ -224,7 +224,7 @@ public class MainModel implements Model{
   }
 
   @Override
-  public boolean deleteDoctor(String doctorId) {
+  public boolean deleteDoctor(String doctorId) throws SQLException {
     String call = "CALL delete_doctor(?)";
     try (CallableStatement call_stmt = conn.prepareCall(call)) {
       call_stmt.setString(1, doctorId);
@@ -237,9 +237,8 @@ public class MainModel implements Model{
         return rowsDeleted.equals("1");
       }
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      throw e;
     }
-
     return false;
   }
 
@@ -303,7 +302,7 @@ public class MainModel implements Model{
   public Appointment createNewAppointment(String studentId,
                                           String doctorId,
                                           LocalDate appointmentDate,
-                                          LocalTime appointmentTime) {
+                                          LocalTime appointmentTime) throws SQLException {
     Appointment newAppointment = null;
 
     String call = "CALL create_new_appointment(?,?,?,?)";
@@ -326,7 +325,7 @@ public class MainModel implements Model{
         newAppointment = new Appointment(appointmentId, apptDate, apptTime, sId, dId);
       }
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      throw e;
     }
 
     return newAppointment;
@@ -351,6 +350,33 @@ public class MainModel implements Model{
       String specialization = rs.getString("specialization");
       doctor = new Doctor(doctorId, firstName, lastName, emailId, qualification,
               phoneNumber, specialization);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return doctor;
+  }
+
+  @Override
+  public Doctor getDoctorById(String doctorId) {
+    Doctor doctor = null;
+
+    String call = "CALL doctor_by_id(?)";
+    try (CallableStatement call_stmt = conn.prepareCall(call)) {
+      call_stmt.setString(1, doctorId);
+      call_stmt.execute();
+      ResultSet rs = call_stmt.getResultSet();
+
+      // move the cursor once because we know that there will be only one student in the result
+      if(rs.next()) {
+        String sId = rs.getString("doctor_id");
+        String firstName = rs.getString("first_name");
+        String lastName = rs.getString("last_name");
+        String emailId = rs.getString("email_id");
+        String qualification = rs.getString("qualification");
+        String phone_number = rs.getString("phone_number");
+        String specialization = rs.getString("specialization");
+        doctor = new Doctor(doctorId, firstName, lastName, emailId, qualification, phone_number, specialization);
+      }
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }

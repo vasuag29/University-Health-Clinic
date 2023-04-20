@@ -72,6 +72,16 @@ public class Control implements Features {
 
 	@Override
 	public void deleteDoctor(Features features) {
+		view.deleteDoctor(features, model, view);
+	}
 
+	@Override
+	public void showDoctor(Features features) {
+		view.showDocInfo(features, model, view);
+	}
+
+	@Override
+	public void showStudent(Features features) {
+		view.showStuInfo(features, model, view);
 	}
 }

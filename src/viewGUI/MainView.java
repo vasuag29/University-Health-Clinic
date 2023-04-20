@@ -16,8 +16,11 @@ import controller.Features;
 import model.DataTypes.Specialization;
 import model.Model;
 import viewGUI.cancelAppointment.CancelAppointment;
+import viewGUI.deleteDoctor.DeleteDoctor;
 import viewGUI.newAppointment.NewAppointment;
 import viewGUI.showAppointment.ShowAppointment;
+import viewGUI.showInfo.ShowDoctorInfo;
+import viewGUI.showInfo.ShowStudentInfo;
 import viewGUI.updateAppointment.UpdateAppointment;
 
 public class MainView extends JFrame implements View {
@@ -25,11 +28,17 @@ public class MainView extends JFrame implements View {
 	ShowAppointment showAppointment = new ShowAppointment();
 	CancelAppointment cancelAppointmentObject = new CancelAppointment();
 	UpdateAppointment updateAppointmentObject = new UpdateAppointment();
+	DeleteDoctor deleteDoctorObject = new DeleteDoctor();
+	ShowDoctorInfo showDoctor = new ShowDoctorInfo();
+	ShowStudentInfo showStudent = new ShowStudentInfo();
+
 	JButton newAppointment = new JButton("Create New Appointment");
 	JButton updateAppointment = new JButton("Update Appointment");
 	JButton cancelAppointment = new JButton("Cancel Appointment");
 	JButton showAppointments = new JButton("Show Appointments");
 	JButton deleteDoctor = new JButton("Delete Doctor Records");
+	JButton showStudentInfo = new JButton("Show Student Information");
+	JButton showDoctorInfo = new JButton("Show Doctor Information");
 	JLabel credentialsMessage = new JLabel("Enter credentials to connect to the database");
 	JLabel username = new JLabel("Username");
 	JLabel password = new JLabel("Password");
@@ -64,6 +73,8 @@ public class MainView extends JFrame implements View {
 		cancelAppointment.addActionListener(e -> features.cancelAppointment());
 		updateAppointment.addActionListener(e -> features.updateAppointment(features));
 		deleteDoctor.addActionListener(e -> features.deleteDoctor(features));
+		showStudentInfo.addActionListener(e -> features.showStudent(features));
+		showDoctorInfo.addActionListener(e -> features.showDoctor(features));
 	}
 
 	@Override
@@ -81,11 +92,16 @@ public class MainView extends JFrame implements View {
 		panel.add(updateAppointment);
 		panel.add(cancelAppointment);
 		panel.add(showAppointments);
+		panel.add(showDoctorInfo);
+		panel.add(showStudentInfo);
 		panel.add(deleteDoctor);
 		appointment.disableNewAppointmentWindow();
 		showAppointment.disableShowAppointmentWindow();
 		cancelAppointmentObject.disableShowAppointmentWindow();
 		updateAppointmentObject.disableShowAppointmentWindow();
+		deleteDoctorObject.disableDeleteDoctorWindow();
+		showStudent.disableStudentInfoWindow();
+		showDoctor.disableDoctorInfoWindow();
 		setVisible(true);
 	}
 
@@ -148,5 +164,26 @@ public class MainView extends JFrame implements View {
 		ZoneId zoneId = ZoneId.systemDefault();
 		ZonedDateTime zonedDateTime = instant.atZone(zoneId);
 		return zonedDateTime.toLocalDate();
+	}
+
+	@Override
+	public void deleteDoctor(Features features, Model model, View view) {
+		deleteDoctorObject = new DeleteDoctor();
+		setVisible(false);
+		deleteDoctorObject.deleteDoctorInfo(features, model, view);
+	}
+
+	@Override
+	public void showDocInfo(Features features, Model model, View view) {
+		showDoctor = new ShowDoctorInfo();
+		setVisible(false);
+		showDoctor.showDoctorInfo(features, model, view);
+	}
+
+	@Override
+	public void showStuInfo(Features features, Model model, View view) {
+		showStudent = new ShowStudentInfo();
+		setVisible(false);
+		showStudent.showStudentInfo(features, model, view);
 	}
 }

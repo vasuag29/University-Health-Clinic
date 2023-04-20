@@ -59,7 +59,7 @@ public class NewAppointment extends JFrame {
 
 		mainModel = model;
 		newAppointmentPanel = new JPanel();
-		setSize(320, 500);
+		setSize(300, 500);
 		setLocation(200, 200);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -103,25 +103,31 @@ public class NewAppointment extends JFrame {
 	Get appointment info
 	 */
 	public void createAppointment(Model model, View view) {
-		Date selectedDate = (Date) datePicker.getModel().getValue();
-		LocalDate localDate = view.convertDateToLocalDate(selectedDate);
+		try {
+			Date selectedDate = (Date) datePicker.getModel().getValue();
+			LocalDate localDate = view.convertDateToLocalDate(selectedDate);
 
-		String studentUniqueId = studentId.getText();
+			String studentUniqueId = studentId.getText();
 
-		String hrs = (String) hoursComboBox.getSelectedItem();
-		String mins = (String) minutesComboBox.getSelectedItem();
-		String timeConcatenate = hrs + ":" + mins + ":00";
-		LocalTime localTime = view.convertStringToLocalTime(timeConcatenate);
+			String hrs = (String) hoursComboBox.getSelectedItem();
+			String mins = (String) minutesComboBox.getSelectedItem();
+			String timeConcatenate = hrs + ":" + mins + ":00";
+			LocalTime localTime = view.convertStringToLocalTime(timeConcatenate);
 
-		String doctorName = (String) doctorList.getSelectedItem();
-		String[] doctorNameSplit = doctorName.split(" ");
-		String doctorId = model.getDoctorByName(doctorNameSplit[0], doctorNameSplit[1]);
-		model.createNewAppointment(studentUniqueId, doctorId, localDate, localTime);
-		showMessage("Appointment Created Successfully");
-		view.showMenu();
+			String doctorName = (String) doctorList.getSelectedItem();
+			String[] doctorNameSplit = doctorName.split(" ");
+			String doctorId = model.getDoctorByName(doctorNameSplit[0], doctorNameSplit[1]);
+			model.createNewAppointment(studentUniqueId, doctorId, localDate, localTime);
+			showMessage("Appointment Created Successfully");
+			view.showMenu();
+		} catch (Exception e) {
+			showMessage(e.getMessage());
+			view.showMenu();
+		}
 	}
 
 	public void showDoctorList(View view) {
+		try {
 			String[] temp;
 			Date selectedDate = (Date) datePicker.getModel().getValue();
 			LocalDate localDate = view.convertDateToLocalDate(selectedDate);
@@ -148,6 +154,9 @@ public class NewAppointment extends JFrame {
 			newAppointmentPanel.add(back);
 			newAppointmentPanel.add(createAppointment);
 			setVisible(true);
+		} catch (Exception e) {
+			showMessage(e.getMessage());
+		}
 	}
 
 	public void showMessage(String message) {

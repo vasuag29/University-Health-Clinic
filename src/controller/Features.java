@@ -18,4 +18,8 @@ public interface Features {
 	void updateAppointment(Features features);
 
 	void deleteDoctor(Features features);
+
+	void showDoctor(Features features);
+
+	void showStudent(Features features);
 }
