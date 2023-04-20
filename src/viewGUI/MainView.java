@@ -113,6 +113,7 @@ public class MainView extends JFrame implements View {
 		showStudent.disableStudentInfoWindow();
 		showDoctor.disableDoctorInfoWindow();
 		newDoc.disableDoctorInfoWindow();
+		addTestApp.disableDoctorInfoWindow();
 		setVisible(true);
 	}
 

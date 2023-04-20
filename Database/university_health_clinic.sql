@@ -440,7 +440,7 @@ BEGIN
   END IF;
   
   INSERT INTO lab_test_for_appointment (test_name, appointment_id) VALUES (lab_test_name, appt_id);
-  SELECT * FROM lab_test_for_appointment WHERE test_name = lab_test_name;
+  SELECT * FROM lab_test WHERE test_name = lab_test_name;
 END$$
 DELIMITER ;
 
