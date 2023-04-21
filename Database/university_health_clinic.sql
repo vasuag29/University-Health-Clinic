@@ -154,8 +154,8 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'No appointments found';
     ELSE
-		SELECT a.*, ab.student_id, ab.doctor_id FROM appointment_booking AS ab
-		LEFT JOIN appointment AS a ON a.appointment_id = ab.appointment_id;
+		SELECT a.*, ab.student_id, ab.doctor_id FROM appointment AS a
+		LEFT JOIN appointment_booking AS ab ON a.appointment_id = ab.appointment_id;
 	END IF;
 END $$
 DELIMITER ;
@@ -353,7 +353,8 @@ CREATE PROCEDURE get_appointments_by_month()
 BEGIN
   SELECT YEAR(appointment_date) AS year, MONTH(appointment_date) AS month, COUNT(*) AS appointment_count
   FROM appointment
-  GROUP BY YEAR(appointment_date), MONTH(appointment_date);
+  GROUP BY YEAR(appointment_date), MONTH(appointment_date)
+  ORDER BY MONTH(appointment_date), YEAR(appointment_date);
 END $$
 DELIMITER ;
 
@@ -456,11 +457,21 @@ BEGIN
 END $$
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS delete_lab_test_trigger;
+DELIMITER $$
+CREATE TRIGGER delete_lab_test_trigger
+BEFORE DELETE ON appointment_booking
+FOR EACH ROW
+BEGIN
+  DELETE FROM lab_test_for_appointment WHERE appointment_id = OLD.appointment_id;
+END $$
+DELIMITER ;
+
 
 DROP TRIGGER IF EXISTS delete_appointment_booking_trigger;
 DELIMITER $$
-CREATE TRIGGER delete_appointment_trigger
-AFTER DELETE ON appointment_booking
+CREATE TRIGGER delete_appointment_booking_trigger
+BEFORE DELETE ON appointment_booking
 FOR EACH ROW
 BEGIN
   DELETE FROM appointment WHERE appointment_id = OLD.appointment_id 
