@@ -104,7 +104,6 @@ FOREIGN KEY (medicine) REFERENCES medicine(name)
 
 # ------------------------------------- Procedures -------------------------------------
 
-CALL student_by_id('7654321');
 DROP PROCEDURE IF EXISTS student_by_id;
 DELIMITER $$
 CREATE PROCEDURE student_by_id(s_id VARCHAR(7))
