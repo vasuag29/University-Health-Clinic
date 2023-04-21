@@ -77,17 +77,18 @@ public class UpdateAppointment extends JFrame {
 					appList = new JComboBox(appointmentString.toArray());
 					updateAppointmentPanel.add(appointmentList);
 					updateAppointmentPanel.add(appList);
-					updateAppointmentPanel.add(newDate);
+
+					updateAppointmentPanel.add(newTime);
 					updateAppointmentPanel.add(hoursComboBox);
 					updateAppointmentPanel.add(minutesComboBox);
 
-					updateAppointmentPanel.add(newTime);
+					updateAppointmentPanel.add(newDate);
 					updateAppointmentPanel.add(datePicker);
 
 					updateAppointmentPanel.add(update);
 					updateAppointmentPanel.add(back);
 					add(updateAppointmentPanel);
-					setSize(320, 500);
+					setSize(250, 500);
 					setLocation(200, 200);
 					setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					setVisible(true);

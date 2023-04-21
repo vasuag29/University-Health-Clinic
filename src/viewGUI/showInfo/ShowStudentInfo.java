@@ -74,13 +74,17 @@ public class ShowStudentInfo extends JFrame {
 		columns.add("last_name");
 		columns.add("email_id");
 		columns.add("phone_number");
+		columns.add("degree_earned");
+		columns.add("sex");
 
 
 		values.add(new String[]{student.getStudentId(),
 						student.getFirstName(),
 						student.getLastName(),
 						student.getEmailId(),
-						student.getPhoneNumber()});
+						student.getPhoneNumber(),
+						student.getDegreeEnrolled(),
+						student.getSex()});
 
 
 		TableModel tableModel = new DefaultTableModel(values.toArray(new Object[][]{}), columns.toArray());
@@ -89,7 +93,7 @@ public class ShowStudentInfo extends JFrame {
 		studentInfoPanel.add(back);
 		back.addActionListener(e -> view.showMenu());
 		add(studentInfoPanel);
-		setSize(500, 500);
+		setSize(1100, 500);
 		setVisible(true);
 	}
 }

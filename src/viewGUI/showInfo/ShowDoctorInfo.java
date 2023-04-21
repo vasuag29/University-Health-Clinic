@@ -70,7 +70,7 @@ public class ShowDoctorInfo extends JFrame {
 
 		List<String> columns = new ArrayList<>();
 		List<String[]> values = new ArrayList<>();
-		columns.add("student_id");
+		columns.add("doctor_id");
 		columns.add("first_name");
 		columns.add("last_name");
 		columns.add("email_id");
