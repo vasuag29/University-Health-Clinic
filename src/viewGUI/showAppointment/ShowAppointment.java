@@ -59,18 +59,16 @@
 			revalidate();
 			repaint();
 
-			List<Appointment> ap1 = null;
 			try {
-				ap1 = model.getAllAppointments();
+				List<Appointment> ap1 = model.getAllAppointments();
+				if (ap1.size() > 0) {
+					showTable(ap1, features);
+				} else {
+					showMessage("No Appointments Available");
+					features.showOriginalMenu();
+				}
 			} catch (Exception e) {
 				showMessage(e.getMessage());
-			}
-
-			assert ap1 != null;
-			if (ap1.size() > 0) {
-				showTable(ap1, features);
-			} else {
-				showMessage("No Appointments Available");
 				features.showOriginalMenu();
 			}
 		}
