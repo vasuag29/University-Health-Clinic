@@ -135,7 +135,12 @@
 			List<Appointment> appointments = new ArrayList<>();
 			try {
 				appointments = model.getAppointmentsByStudentId(studentUniqueId);
-				showTable(appointments, features);
+				if (appointments.size() > 0) {
+					showTable(appointments, features);
+				} else {
+					showMessage("No Appointments Available");
+					features.showOriginalMenu();
+				}
 			} catch (Exception e) {
 				showMessage(e.getMessage());
 				features.showOriginalMenu();
